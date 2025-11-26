@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react'
 import { CMSData, Section, SiteConfig } from '@/types/content'
 import { initialContent } from '@/lib/initial-content'
 
@@ -56,9 +62,9 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     }
   }, [data.config])
 
-  const saveChanges = () => {
+  const saveChanges = useCallback(() => {
     localStorage.setItem('lume_cms_data', JSON.stringify(data))
-  }
+  }, [data])
 
   const updateConfig = (newConfig: Partial<SiteConfig>) => {
     setData((prev) => ({
@@ -116,7 +122,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   // Auto-save on changes (debounced in a real app, but here direct)
   useEffect(() => {
     saveChanges()
-  }, [data])
+  }, [saveChanges])
 
   return (
     <CMSContext.Provider

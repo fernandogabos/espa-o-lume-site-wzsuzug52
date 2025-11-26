@@ -83,6 +83,7 @@
   }
 
   .glass-nav {
-    @apply bg-white/90 backdrop-blur-md border-b border-lume-gray/50 shadow-sm;
+    @apply bg-white/90 backdrop-blur-md border-b shadow-sm;
+    border-color: rgba(232, 232, 232, 0.5);
   }
 }
