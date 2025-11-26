@@ -17,6 +17,7 @@ import {
 import { useToast } from '@/hooks/use-toast'
 import { useInView } from '@/hooks/use-in-view'
 import { cn } from '@/lib/utils'
+import { ContactSection, SiteConfig } from '@/types/content'
 
 const formSchema = z.object({
   name: z
@@ -29,7 +30,13 @@ const formSchema = z.object({
     .min(10, { message: 'Mensagem deve ter pelo menos 10 caracteres.' }),
 })
 
-export function Contact() {
+export function Contact({
+  content,
+  config,
+}: {
+  content: ContactSection['content']
+  config: SiteConfig
+}) {
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { ref, hasTriggered } = useInView({ threshold: 0.1 })
@@ -63,7 +70,7 @@ export function Contact() {
     <section id="contact" className="py-20 bg-lume-cream/40">
       <div className="container mx-auto px-4">
         <h2 className="font-display font-bold text-3xl md:text-4xl text-lume-deep-blue mb-12 text-center">
-          Entre em Contato
+          {content.title}
         </h2>
 
         <div
@@ -80,13 +87,8 @@ export function Contact() {
             )}
           >
             <div className="prose prose-lg text-lume-deep-blue/80">
-              <p className="text-xl font-medium">
-                Venha conhecer o espaço pessoalmente!
-              </p>
-              <p>
-                Estamos à disposição para tirar suas dúvidas e apresentar cada
-                detalhe da nossa estrutura. Agende uma visita sem compromisso.
-              </p>
+              <p className="text-xl font-medium">{content.intro}</p>
+              <p>{content.text}</p>
             </div>
 
             <div className="space-y-6">
@@ -96,10 +98,8 @@ export function Contact() {
                 </div>
                 <div>
                   <h4 className="font-bold text-lume-deep-blue">Endereço</h4>
-                  <p className="text-sm text-lume-deep-blue/70">
-                    Rua Moreira Cesar, 319, Vila Arens II
-                    <br />
-                    13.202-600 - Jundiai/SP
+                  <p className="text-sm text-lume-deep-blue/70 whitespace-pre-line">
+                    {config.contact.address}
                   </p>
                 </div>
               </div>
@@ -113,7 +113,7 @@ export function Contact() {
                     Telefone / WhatsApp
                   </h4>
                   <p className="text-sm text-lume-deep-blue/70">
-                    (11) 99875-4842
+                    {config.contact.phone}
                   </p>
                 </div>
               </div>
@@ -125,7 +125,7 @@ export function Contact() {
                 <div>
                   <h4 className="font-bold text-lume-deep-blue">E-mail</h4>
                   <p className="text-sm text-lume-deep-blue/70">
-                    contato@espacolume.com.br
+                    {config.contact.email}
                   </p>
                 </div>
               </div>
@@ -139,9 +139,9 @@ export function Contact() {
                     Horário de Funcionamento
                   </h4>
                   <p className="text-sm text-lume-deep-blue/70">
-                    Seg - Sex: 07h às 21h
+                    Seg - Sex: {config.contact.hours.weekdays}
                     <br />
-                    Sáb: 07h às 13h
+                    Sáb: {config.contact.hours.saturday}
                   </p>
                 </div>
               </div>
@@ -263,7 +263,7 @@ export function Contact() {
 
       {/* WhatsApp Floating Button */}
       <a
-        href="https://wa.me/5511998754842?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20o%20Espaço%20Lume."
+        href={`https://wa.me/${config.contact.whatsapp}?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20o%20Espaço%20Lume.`}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20bd5a] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 animate-fade-in"

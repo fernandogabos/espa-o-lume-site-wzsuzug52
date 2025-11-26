@@ -9,35 +9,9 @@ import {
 import { useInView } from '@/hooks/use-in-view'
 import { cn } from '@/lib/utils'
 import { ZoomIn } from 'lucide-react'
+import { GallerySection } from '@/types/content'
 
-const photos = [
-  {
-    src: 'https://img.usecurling.com/p/800/600?q=office%20waiting%20room%20cozy&dpr=2',
-    alt: 'Área de Espera',
-  },
-  {
-    src: 'https://img.usecurling.com/p/800/600?q=office%20interior%20design%20bright&dpr=2',
-    alt: 'Ambientes Internos',
-  },
-  {
-    src: 'https://img.usecurling.com/p/800/600?q=office%20corridor%20clean%20modern&dpr=2',
-    alt: 'Design Moderno',
-  },
-  {
-    src: 'https://img.usecurling.com/p/800/600?q=office%20window%20natural%20light&dpr=2',
-    alt: 'Iluminação Natural',
-  },
-  {
-    src: 'https://img.usecurling.com/p/800/600?q=office%20decor%20details&dpr=2',
-    alt: 'Detalhes de Decoração',
-  },
-  {
-    src: 'https://img.usecurling.com/p/800/600?q=office%20meeting%20room%20comfortable&dpr=2',
-    alt: 'Aconchego',
-  },
-]
-
-export function Gallery() {
+export function Gallery({ content }: { content: GallerySection['content'] }) {
   const { ref, hasTriggered } = useInView({ threshold: 0.1 })
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null)
 
@@ -45,14 +19,14 @@ export function Gallery() {
     <section id="gallery" className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <h2 className="font-display font-bold text-3xl md:text-4xl text-lume-deep-blue mb-12 text-center">
-          Conheça o Espaço
+          {content.title}
         </h2>
 
         <div
           ref={ref}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
         >
-          {photos.map((photo, index) => (
+          {content.images.map((photo, index) => (
             <Dialog key={index}>
               <DialogTrigger asChild>
                 <div

@@ -1,7 +1,8 @@
 import { useInView } from '@/hooks/use-in-view'
 import { cn } from '@/lib/utils'
+import { AboutSection } from '@/types/content'
 
-export function About() {
+export function About({ content }: { content: AboutSection['content'] }) {
   const { ref, hasTriggered } = useInView({ threshold: 0.2 })
 
   return (
@@ -17,36 +18,19 @@ export function About() {
           )}
         >
           <h2 className="font-display font-bold text-3xl md:text-4xl text-lume-deep-blue mb-8">
-            Quem Somos
+            {content.title}
           </h2>
 
           <div className="space-y-6 text-lg text-lume-deep-blue/80 leading-relaxed">
-            <p>
-              O{' '}
-              <span className="font-semibold text-lume-mint">Espaço Lume</span>{' '}
-              é um ambiente profissional acolhedor, idealizado para
-              profissionais das áreas de{' '}
-              <span className="font-medium">
-                saúde, pedagogia, estética, jurídico e administrativo
-              </span>{' '}
-              que buscam excelência em seus atendimentos.
-            </p>
+            <p>{content.text}</p>
 
             <div className="bg-white p-8 rounded-2xl shadow-subtle border-l-4 border-lume-mint my-8">
               <p className="italic text-lume-deep-blue font-medium">
-                "Localizado na privilegiada Vila Arens, em Jundiaí, próximo à
-                Faculdade de Medicina de Jundiaí (FMJ) e ao Colégio Divino
-                Salvador, oferecemos conveniência e prestígio para o seu
-                negócio."
+                {content.highlight}
               </p>
             </div>
 
-            <p>
-              Nosso propósito é oferecer uma estrutura moderna, com conforto,
-              segurança e uma experiência positiva tanto para os profissionais
-              quanto para seus clientes. Cuidamos de cada detalhe para que você
-              possa focar no que realmente importa: o seu trabalho.
-            </p>
+            <p>{content.closing}</p>
           </div>
         </div>
       </div>

@@ -8,6 +8,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
+import { useCMS } from '@/contexts/CMSContext'
 
 const navItems = [
   { name: 'Home', href: '#home' },
@@ -24,6 +25,8 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
   const [isOpen, setIsOpen] = useState(false)
+  const { data } = useCMS()
+  const { config } = data
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,15 +76,25 @@ export function Navbar() {
           className="flex items-center gap-2 group"
         >
           <div className="relative flex items-center">
-            <Flame className="w-8 h-8 md:w-10 md:h-10 text-lume-yellow fill-lume-yellow mr-2" />
-            <div className="flex flex-col leading-none">
-              <span className="font-serif text-2xl md:text-3xl text-black tracking-wide">
-                ESPAÇO
-              </span>
-              <span className="font-serif text-3xl md:text-4xl text-black font-bold -mt-1 md:-mt-2">
-                LUME
-              </span>
-            </div>
+            {config.logo ? (
+              <img
+                src={config.logo}
+                alt="Espaço Lume"
+                className="h-12 w-auto object-contain"
+              />
+            ) : (
+              <>
+                <Flame className="w-8 h-8 md:w-10 md:h-10 text-lume-yellow fill-lume-yellow mr-2" />
+                <div className="flex flex-col leading-none">
+                  <span className="font-serif text-2xl md:text-3xl text-black tracking-wide">
+                    ESPAÇO
+                  </span>
+                  <span className="font-serif text-3xl md:text-4xl text-black font-bold -mt-1 md:-mt-2">
+                    LUME
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </a>
 

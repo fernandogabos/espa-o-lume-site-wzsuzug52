@@ -9,40 +9,9 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { useInView } from '@/hooks/use-in-view'
 import { cn } from '@/lib/utils'
+import { RoomsSection } from '@/types/content'
 
-const rooms = [
-  {
-    title: 'Sala 1',
-    area: '11,17 m²',
-    price: 'R$ 2.500',
-    description: 'Ideal para atendimentos individuais, psicologia ou nutrição.',
-    features: ['Armário embutido', 'Climatizada', 'Iluminação natural'],
-    image:
-      'https://img.usecurling.com/p/600/400?q=office%20room%20wardrobe&dpr=2',
-  },
-  {
-    title: 'Sala 2',
-    area: '9,43 m²',
-    price: 'R$ 2.000',
-    description:
-      'Perfeita para profissionais que buscam um espaço compacto e funcional.',
-    features: ['Armário embutido', 'Climatizada', 'Silenciosa'],
-    image:
-      'https://img.usecurling.com/p/600/400?q=small%20office%20room%20cozy&dpr=2',
-  },
-  {
-    title: 'Sala Fundo',
-    area: '26,71 m²',
-    price: 'R$ 3.500',
-    description:
-      'Espaço amplo para estúdios, pequenos grupos ou escritórios compartilhados.',
-    features: ['Ampla área', 'Privacidade total', 'Banheiro próximo'],
-    image:
-      'https://img.usecurling.com/p/600/400?q=large%20office%20studio&dpr=2',
-  },
-]
-
-export function Rooms() {
+export function Rooms({ content }: { content: RoomsSection['content'] }) {
   const { ref, hasTriggered } = useInView({ threshold: 0.1 })
 
   const scrollToContact = () => {
@@ -53,16 +22,16 @@ export function Rooms() {
     <section id="rooms" className="py-20 bg-lume-sky/10">
       <div className="container mx-auto px-4">
         <h2 className="font-display font-bold text-3xl md:text-4xl text-lume-deep-blue mb-4 text-center">
-          Salas Disponíveis
+          {content.title}
         </h2>
         <p className="text-center text-lume-deep-blue/70 mb-12 max-w-2xl mx-auto">
-          Escolha o espaço ideal para o crescimento do seu negócio.
+          {content.subtitle}
         </p>
 
         <div ref={ref} className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {rooms.map((room, index) => (
+          {content.items.map((room, index) => (
             <Card
-              key={room.title}
+              key={index}
               className={cn(
                 'flex flex-col border-none shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white',
                 hasTriggered

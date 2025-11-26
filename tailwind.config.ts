@@ -74,14 +74,14 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
-        // Custom Espaço Lume Colors
+        // Custom Espaço Lume Colors using CSS Variables
         lume: {
-          mint: '#94D1B4',
-          sky: '#AFD9FF',
-          gray: '#E8E8E8',
-          cream: '#F7F3E9',
-          'deep-blue': '#2F4F6F',
-          yellow: '#FFD700', // Added for logo flame
+          mint: 'var(--lume-mint)',
+          sky: 'var(--lume-sky)',
+          gray: 'var(--lume-gray)',
+          cream: 'var(--lume-cream)',
+          'deep-blue': 'var(--lume-deep-blue)',
+          yellow: 'var(--lume-yellow)',
         },
       },
       borderRadius: {

@@ -1,15 +1,11 @@
-import {
-  Facebook,
-  Instagram,
-  MapPin,
-  Phone,
-  Mail,
-  Clock,
-  Flame,
-} from 'lucide-react'
+import { Instagram, MapPin, Phone, Mail, Clock, Flame } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useCMS } from '@/contexts/CMSContext'
 
 export function Footer() {
+  const { data } = useCMS()
+  const { config } = data
+
   const scrollToContact = () => {
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
   }
@@ -21,23 +17,32 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <Flame className="w-6 h-6 text-lume-yellow fill-lume-yellow" />
-              <div className="flex flex-col leading-none">
-                <span className="font-serif text-lg text-lume-deep-blue tracking-wide">
-                  ESPAÇO
-                </span>
-                <span className="font-serif text-xl text-lume-deep-blue font-bold -mt-1">
-                  LUME
-                </span>
-              </div>
+              {config.logo ? (
+                <img
+                  src={config.logo}
+                  alt="Espaço Lume"
+                  className="h-10 w-auto object-contain"
+                />
+              ) : (
+                <>
+                  <Flame className="w-6 h-6 text-lume-yellow fill-lume-yellow" />
+                  <div className="flex flex-col leading-none">
+                    <span className="font-serif text-lg text-lume-deep-blue tracking-wide">
+                      ESPAÇO
+                    </span>
+                    <span className="font-serif text-xl text-lume-deep-blue font-bold -mt-1">
+                      LUME
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
             <p className="text-lume-deep-blue/80 text-sm leading-relaxed">
-              Um ambiente profissional acolhedor, projetado para inspirar e
-              conectar profissionais em Jundiaí.
+              {config.description}
             </p>
             <div className="flex gap-4">
               <a
-                href="https://www.instagram.com/espacolumejdi/"
+                href={config.contact.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-lume-deep-blue hover:text-lume-mint transition-colors"
@@ -84,17 +89,15 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-sm text-lume-deep-blue/80">
                 <MapPin className="w-4 h-4 mt-1 text-lume-mint shrink-0" />
-                <span>
-                  Rua Moreira Cesar, 319, Vila Arens II, 13.202-600 - Jundiai/SP
-                </span>
+                <span>{config.contact.address}</span>
               </li>
               <li className="flex items-center gap-3 text-sm text-lume-deep-blue/80">
                 <Phone className="w-4 h-4 text-lume-mint shrink-0" />
-                <span>(11) 99875-4842</span>
+                <span>{config.contact.phone}</span>
               </li>
               <li className="flex items-center gap-3 text-sm text-lume-deep-blue/80">
                 <Mail className="w-4 h-4 text-lume-mint shrink-0" />
-                <span>contato@espacolume.com.br</span>
+                <span>{config.contact.email}</span>
               </li>
             </ul>
           </div>
@@ -108,8 +111,8 @@ export function Footer() {
               <li className="flex items-start gap-3 text-sm text-lume-deep-blue/80">
                 <Clock className="w-4 h-4 mt-1 text-lume-mint shrink-0" />
                 <div>
-                  <p>Seg - Sex: 07h às 21h</p>
-                  <p>Sáb: 07h às 13h</p>
+                  <p>Seg - Sex: {config.contact.hours.weekdays}</p>
+                  <p>Sáb: {config.contact.hours.saturday}</p>
                 </div>
               </li>
             </ul>

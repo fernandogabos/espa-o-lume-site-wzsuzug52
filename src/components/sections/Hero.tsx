@@ -2,8 +2,9 @@ import { ArrowDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useInView } from '@/hooks/use-in-view'
 import { cn } from '@/lib/utils'
+import { HeroSection } from '@/types/content'
 
-export function Hero() {
+export function Hero({ content }: { content: HeroSection['content'] }) {
   const { ref, hasTriggered } = useInView({ threshold: 0.1 })
 
   const scrollToContact = () => {
@@ -12,13 +13,13 @@ export function Hero() {
 
   return (
     <section
-      id="home"
+      id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://img.usecurling.com/p/1920/1080?q=modern%20office%20reception%20cozy&dpr=2"
+          src={content.backgroundImage}
           alt="Espaço Lume Interior"
           className="w-full h-full object-cover"
         />
@@ -37,11 +38,10 @@ export function Hero() {
         )}
       >
         <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-7xl mb-6 leading-tight text-shadow-sm">
-          Conforto, Leveza e Credibilidade
+          {content.title}
         </h1>
         <p className="font-sans text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl mx-auto text-white/95 font-light leading-relaxed">
-          Um ambiente profissional acolhedor na Vila Arens, Jundiaí, projetado
-          para inspirar e conectar profissionais.
+          {content.subtitle}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Button
@@ -49,7 +49,7 @@ export function Hero() {
             onClick={scrollToContact}
             className="bg-lume-mint hover:bg-lume-mint/90 text-white font-semibold text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
           >
-            Agendar Visita
+            {content.buttonText}
           </Button>
         </div>
       </div>
