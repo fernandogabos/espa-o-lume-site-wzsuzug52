@@ -45,7 +45,7 @@ export function Location() {
                     Acesso Fácil
                   </h4>
                   <p className="text-sm text-lume-deep-blue/70">
-                    Ponto de ônibus próximo e vias rápidas.
+                    Próximo a pontos de ônibus e vias rápidas.
                   </p>
                 </div>
               </div>
@@ -54,7 +54,7 @@ export function Location() {
                 <div>
                   <h4 className="font-bold text-lume-deep-blue">Vizinhança</h4>
                   <p className="text-sm text-lume-deep-blue/70">
-                    Consultórios e estúdios de pilates.
+                    Clínicas, estúdios de pilates e comércio.
                   </p>
                 </div>
               </div>
@@ -76,7 +76,7 @@ export function Location() {
                     Conveniência
                   </h4>
                   <p className="text-sm text-lume-deep-blue/70">
-                    Comércio e serviços variados ao redor.
+                    Alto fluxo de pessoas e segurança.
                   </p>
                 </div>
               </div>
@@ -93,7 +93,7 @@ export function Location() {
             )}
           >
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.999999999999!2d-46.88999999999999!3d-23.18999999999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDExJzI0LjAiUyA0NsKwNTMnMjQuMCJX!5e0!3m2!1sen!2sbr!4v1600000000000!5m2!1sen!2sbr"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.887466666666!2d-46.88666666666666!3d-23.19666666666666!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cf266666666667%3A0x0!2sR.%20Moreira%20C%C3%A9sar%2C%20319%20-%20Vila%20Arens%20II%2C%20Jundia%C3%AD%20-%20SP%2C%2013202-600!5e0!3m2!1sen!2sbr!4v1600000000000!5m2!1sen!2sbr"
               width="100%"
               height="100%"
               style={{ border: 0 }}

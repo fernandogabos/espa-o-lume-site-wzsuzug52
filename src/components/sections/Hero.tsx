@@ -18,30 +18,30 @@ export function Hero() {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://img.usecurling.com/p/1920/1080?q=modern%20office%20interior%20bright&dpr=2"
+          src="https://img.usecurling.com/p/1920/1080?q=modern%20office%20reception%20cozy&dpr=2"
           alt="Espaço Lume Interior"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-lume-deep-blue/30 backdrop-blur-[2px]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-lume-deep-blue/40" />
+        <div className="absolute inset-0 bg-lume-deep-blue/40 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-lume-deep-blue/60" />
       </div>
 
       {/* Content */}
       <div
         ref={ref}
         className={cn(
-          'container relative z-10 px-4 text-center text-white transition-all duration-1000 transform',
+          'container relative z-10 px-4 text-center text-white transition-all duration-1000 transform mt-16',
           hasTriggered
             ? 'opacity-100 translate-y-0'
             : 'opacity-0 translate-y-10',
         )}
       >
         <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-7xl mb-6 leading-tight text-shadow-sm">
-          Espaço Lume: Onde seu profissionalismo encontra o conforto
+          Conforto, Leveza e Credibilidade
         </h1>
-        <p className="font-sans text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl mx-auto text-white/90 font-light">
-          Um ambiente acolhedor e moderno na Vila Arens, Jundiaí, preparado para
-          receber você e seus clientes com excelência.
+        <p className="font-sans text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl mx-auto text-white/95 font-light leading-relaxed">
+          Um ambiente profissional acolhedor na Vila Arens, Jundiaí, projetado
+          para inspirar e conectar profissionais.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Button

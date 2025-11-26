@@ -19,60 +19,63 @@ const structureItems = [
     title: 'Área de espera',
     description: 'Com café e água para seus clientes.',
     image:
-      'https://img.usecurling.com/p/400/300?q=waiting%20room%20coffee&dpr=2',
+      'https://img.usecurling.com/p/400/300?q=waiting%20room%20coffee%20cozy&dpr=2',
   },
   {
     icon: Wind,
     title: 'Ambientes climatizados',
     description: 'Conforto térmico em todas as salas.',
     image:
-      'https://img.usecurling.com/p/400/300?q=air%20conditioner%20room&dpr=2',
+      'https://img.usecurling.com/p/400/300?q=air%20conditioner%20office&dpr=2',
   },
   {
     icon: Hammer,
     title: 'Salas recém reformadas',
     description: 'Acabamento moderno e impecável.',
     image:
-      'https://img.usecurling.com/p/400/300?q=modern%20office%20renovated&dpr=2',
+      'https://img.usecurling.com/p/400/300?q=renovated%20office%20room&dpr=2',
   },
   {
     icon: Calendar,
     title: 'Sistema de agendamento',
     description: 'Gestão própria e facilitada.',
     image:
-      'https://img.usecurling.com/p/400/300?q=calendar%20app%20mockup&dpr=2',
+      'https://img.usecurling.com/p/400/300?q=calendar%20app%20tablet&dpr=2',
   },
   {
     icon: Camera,
     title: 'Monitoramento 24h',
     description: 'Câmeras para sua segurança.',
     image:
-      'https://img.usecurling.com/p/400/300?q=security%20camera%20office&dpr=2',
+      'https://img.usecurling.com/p/400/300?q=security%20camera%20cctv&dpr=2',
   },
   {
     icon: ShieldAlert,
     title: 'Alarme e cerca elétrica',
     description: 'Proteção patrimonial completa.',
-    image: 'https://img.usecurling.com/p/400/300?q=security%20system&dpr=2',
+    image:
+      'https://img.usecurling.com/p/400/300?q=electric%20fence%20security&dpr=2',
   },
   {
     icon: FileCheck,
     title: 'Documentação completa',
     description: 'AVCB e vigilância sanitária em dia.',
-    image: 'https://img.usecurling.com/p/400/300?q=document%20approved&dpr=2',
+    image:
+      'https://img.usecurling.com/p/400/300?q=approved%20document%20stamp&dpr=2',
   },
   {
     icon: Accessibility,
     title: 'Acessibilidade',
     description: 'Banheiros adaptados para PNE.',
-    image: 'https://img.usecurling.com/p/400/300?q=accessible%20bathroom&dpr=2',
+    image:
+      'https://img.usecurling.com/p/400/300?q=accessible%20bathroom%20sign&dpr=2',
   },
   {
     icon: Palette,
     title: 'Personalização',
     description: 'Possibilidade de personalizar sua sala.',
     image:
-      'https://img.usecurling.com/p/400/300?q=interior%20design%20office&dpr=2',
+      'https://img.usecurling.com/p/400/300?q=interior%20design%20office%20decor&dpr=2',
   },
 ]
 
@@ -117,7 +120,7 @@ export function Structure() {
                   </h3>
                 </div>
               </div>
-              <CardContent className="p-6 bg-lume-cream/20">
+              <CardContent className="p-6 bg-lume-cream/20 h-full">
                 <p className="text-lume-deep-blue/80">{item.description}</p>
               </CardContent>
             </Card>

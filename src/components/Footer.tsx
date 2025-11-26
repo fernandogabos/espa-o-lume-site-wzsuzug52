@@ -1,4 +1,12 @@
-import { Facebook, Instagram, MapPin, Phone, Mail, Clock } from 'lucide-react'
+import {
+  Facebook,
+  Instagram,
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
+  Flame,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function Footer() {
@@ -13,12 +21,15 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-lume-mint rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">L</span>
+              <Flame className="w-6 h-6 text-lume-yellow fill-lume-yellow" />
+              <div className="flex flex-col leading-none">
+                <span className="font-serif text-lg text-lume-deep-blue tracking-wide">
+                  ESPAÇO
+                </span>
+                <span className="font-serif text-xl text-lume-deep-blue font-bold -mt-1">
+                  LUME
+                </span>
               </div>
-              <span className="font-display font-bold text-xl text-lume-deep-blue">
-                Espaço Lume
-              </span>
             </div>
             <p className="text-lume-deep-blue/80 text-sm leading-relaxed">
               Um ambiente profissional acolhedor, projetado para inspirar e
@@ -26,18 +37,13 @@ export function Footer() {
             </p>
             <div className="flex gap-4">
               <a
-                href="#"
+                href="https://www.instagram.com/espacolumejdi/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-lume-deep-blue hover:text-lume-mint transition-colors"
               >
                 <Instagram className="w-5 h-5" />
                 <span className="sr-only">Instagram</span>
-              </a>
-              <a
-                href="#"
-                className="text-lume-deep-blue hover:text-lume-mint transition-colors"
-              >
-                <Facebook className="w-5 h-5" />
-                <span className="sr-only">Facebook</span>
               </a>
             </div>
           </div>
@@ -53,11 +59,14 @@ export function Footer() {
                 'Quem Somos',
                 'Estrutura',
                 'Salas Disponíveis',
+                'Benefícios',
+                'Localização',
+                'Fotos',
                 'Contato',
               ].map((item) => (
                 <li key={item}>
                   <a
-                    href={`#${item === 'Home' ? 'home' : item === 'Quem Somos' ? 'about' : item === 'Estrutura' ? 'structure' : item === 'Salas Disponíveis' ? 'rooms' : 'contact'}`}
+                    href={`#${item === 'Home' ? 'home' : item === 'Quem Somos' ? 'about' : item === 'Estrutura' ? 'structure' : item === 'Salas Disponíveis' ? 'rooms' : item === 'Benefícios' ? 'benefits' : item === 'Localização' ? 'location' : item === 'Fotos' ? 'gallery' : 'contact'}`}
                     className="text-sm text-lume-deep-blue/80 hover:text-lume-mint transition-colors"
                   >
                     {item}
@@ -75,11 +84,13 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-sm text-lume-deep-blue/80">
                 <MapPin className="w-4 h-4 mt-1 text-lume-mint shrink-0" />
-                <span>Vila Arens, Jundiaí - SP</span>
+                <span>
+                  Rua Moreira Cesar, 319, Vila Arens II, 13.202-600 - Jundiai/SP
+                </span>
               </li>
               <li className="flex items-center gap-3 text-sm text-lume-deep-blue/80">
                 <Phone className="w-4 h-4 text-lume-mint shrink-0" />
-                <span>(11) 99999-9999</span>
+                <span>(11) 99875-4842</span>
               </li>
               <li className="flex items-center gap-3 text-sm text-lume-deep-blue/80">
                 <Mail className="w-4 h-4 text-lume-mint shrink-0" />
@@ -91,7 +102,7 @@ export function Footer() {
           {/* Hours & CTA */}
           <div>
             <h3 className="font-display font-bold text-lume-deep-blue mb-4">
-              Horário
+              Horário de Funcionamento
             </h3>
             <ul className="space-y-2 mb-6">
               <li className="flex items-start gap-3 text-sm text-lume-deep-blue/80">

@@ -12,28 +12,28 @@ import { ZoomIn } from 'lucide-react'
 
 const photos = [
   {
-    src: 'https://img.usecurling.com/p/800/600?q=office%20reception%20modern&dpr=2',
-    alt: 'Recepção',
+    src: 'https://img.usecurling.com/p/800/600?q=office%20waiting%20room%20cozy&dpr=2',
+    alt: 'Área de Espera',
   },
   {
-    src: 'https://img.usecurling.com/p/800/600?q=office%20meeting%20room%20bright&dpr=2',
-    alt: 'Sala de Reunião',
+    src: 'https://img.usecurling.com/p/800/600?q=office%20interior%20design%20bright&dpr=2',
+    alt: 'Ambientes Internos',
   },
   {
-    src: 'https://img.usecurling.com/p/800/600?q=office%20corridor%20clean&dpr=2',
-    alt: 'Corredor',
+    src: 'https://img.usecurling.com/p/800/600?q=office%20corridor%20clean%20modern&dpr=2',
+    alt: 'Design Moderno',
   },
   {
-    src: 'https://img.usecurling.com/p/800/600?q=office%20kitchen%20coffee&dpr=2',
-    alt: 'Copa',
-  },
-  {
-    src: 'https://img.usecurling.com/p/800/600?q=office%20desk%20detail&dpr=2',
-    alt: 'Detalhes',
-  },
-  {
-    src: 'https://img.usecurling.com/p/800/600?q=office%20window%20view&dpr=2',
+    src: 'https://img.usecurling.com/p/800/600?q=office%20window%20natural%20light&dpr=2',
     alt: 'Iluminação Natural',
+  },
+  {
+    src: 'https://img.usecurling.com/p/800/600?q=office%20decor%20details&dpr=2',
+    alt: 'Detalhes de Decoração',
+  },
+  {
+    src: 'https://img.usecurling.com/p/800/600?q=office%20meeting%20room%20comfortable&dpr=2',
+    alt: 'Aconchego',
   },
 ]
 
@@ -72,6 +72,9 @@ export function Gallery() {
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
                     <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-10 h-10" />
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <p className="text-white font-medium">{photo.alt}</p>
                   </div>
                 </div>
               </DialogTrigger>

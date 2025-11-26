@@ -24,26 +24,28 @@ export function About() {
             <p>
               O{' '}
               <span className="font-semibold text-lume-mint">Espaço Lume</span>{' '}
-              é um ambiente profissional acolhedor criado especialmente para
-              profissionais da saúde, pedagogia, estética, jurídico e áreas
-              administrativas que buscam um local de excelência para atender
-              seus clientes.
+              é um ambiente profissional acolhedor, idealizado para
+              profissionais das áreas de{' '}
+              <span className="font-medium">
+                saúde, pedagogia, estética, jurídico e administrativo
+              </span>{' '}
+              que buscam excelência em seus atendimentos.
             </p>
 
             <div className="bg-white p-8 rounded-2xl shadow-subtle border-l-4 border-lume-mint my-8">
               <p className="italic text-lume-deep-blue font-medium">
-                "Nossa localização privilegiada na Vila Arens, próxima à
-                Faculdade de Medicina de Jundiaí e ao Colégio Divino Salvador,
-                oferece conveniência e prestígio para o seu negócio."
+                "Localizado na privilegiada Vila Arens, em Jundiaí, próximo à
+                Faculdade de Medicina de Jundiaí (FMJ) e ao Colégio Divino
+                Salvador, oferecemos conveniência e prestígio para o seu
+                negócio."
               </p>
             </div>
 
             <p>
-              Nosso propósito é oferecer uma estrutura moderna, conforto,
+              Nosso propósito é oferecer uma estrutura moderna, com conforto,
               segurança e uma experiência positiva tanto para os profissionais
-              quanto para seus clientes. Acreditamos que o ambiente de trabalho
-              reflete a qualidade do serviço prestado, e por isso cuidamos de
-              cada detalhe para que você possa focar no que faz de melhor.
+              quanto para seus clientes. Cuidamos de cada detalhe para que você
+              possa focar no que realmente importa: o seu trabalho.
             </p>
           </div>
         </div>

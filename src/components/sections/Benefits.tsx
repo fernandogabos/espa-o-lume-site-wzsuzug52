@@ -6,6 +6,8 @@ import {
   Shield,
   MapPin,
   Heart,
+  Zap,
+  Droplets,
 } from 'lucide-react'
 import { useInView } from '@/hooks/use-in-view'
 import { cn } from '@/lib/utils'
@@ -13,40 +15,43 @@ import { cn } from '@/lib/utils'
 const benefits = [
   {
     icon: Wifi,
-    title: 'Infraestrutura Inclusa',
-    description:
-      'Internet de alta velocidade, água e energia elétrica inclusas no valor.',
+    title: 'Internet',
+    description: 'Conexão de alta velocidade inclusa.',
+  },
+  {
+    icon: Droplets,
+    title: 'Água e Luz',
+    description: 'Despesas básicas já inclusas no valor.',
   },
   {
     icon: CalendarCheck,
-    title: 'Agendamento Exclusivo',
-    description: 'Sistema próprio para gerenciar seus horários com facilidade.',
+    title: 'Sistema de Agendamento',
+    description: 'Exclusivo para gerenciar seus horários.',
   },
   {
     icon: Users,
     title: 'Ambiente Multidisciplinar',
-    description: 'Conexão com profissionais de diversas áreas para networking.',
+    description: 'Networking com diversos profissionais.',
   },
   {
     icon: Key,
     title: 'Sublocação',
-    description: 'Possibilidade de sublocação mediante alinhamento prévio.',
+    description: 'Possibilidade mediante alinhamento.',
   },
   {
     icon: Shield,
     title: 'Segurança Completa',
-    description:
-      'Monitoramento, alarme e cerca elétrica para sua tranquilidade.',
+    description: 'Monitoramento, alarme e cerca elétrica.',
   },
   {
     icon: MapPin,
     title: 'Localização Estratégica',
-    description: 'Fácil acesso na Vila Arens, próximo a pontos importantes.',
+    description: 'Fácil acesso na Vila Arens.',
   },
   {
     icon: Heart,
     title: 'Ambiente Acolhedor',
-    description: 'Espaço pensado para o bem-estar de todos.',
+    description: 'Pensado para o bem-estar de todos.',
   },
 ]
 

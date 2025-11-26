@@ -6,22 +6,22 @@ const features = [
   {
     icon: MapPin,
     title: 'Localização',
-    description: 'Ponto estratégico na Vila Arens, fácil acesso.',
+    description: 'Vila Arens, fácil acesso e região nobre.',
   },
   {
     icon: Building2,
     title: 'Estrutura Completa',
-    description: 'Salas modernas e equipadas para seu conforto.',
+    description: 'Salas modernas, climatizadas e equipadas.',
   },
   {
     icon: ShieldCheck,
     title: 'Segurança',
-    description: 'Monitoramento 24h e controle de acesso.',
+    description: 'Monitoramento 24h, alarme e cerca elétrica.',
   },
   {
     icon: Coffee,
     title: 'Serviços Inclusos',
-    description: 'Água, café, internet e limpeza.',
+    description: 'Água, luz, internet e limpeza.',
   },
   {
     icon: Users,

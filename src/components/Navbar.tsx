@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Menu, X } from 'lucide-react'
+import { Menu, Flame } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -35,7 +35,7 @@ export function Navbar() {
         const element = document.getElementById(section)
         if (element) {
           const rect = element.getBoundingClientRect()
-          if (rect.top <= 100 && rect.bottom >= 100) {
+          if (rect.top <= 150 && rect.bottom >= 150) {
             setActiveSection(section)
             break
           }
@@ -62,8 +62,8 @@ export function Navbar() {
   return (
     <nav
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-[60px] md:h-[70px] flex items-center',
-        isScrolled ? 'glass-nav shadow-sm' : 'bg-transparent',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-[70px] md:h-[80px] flex items-center',
+        isScrolled ? 'glass-nav' : 'bg-transparent',
       )}
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
@@ -72,12 +72,17 @@ export function Navbar() {
           onClick={(e) => scrollToSection(e, '#home')}
           className="flex items-center gap-2 group"
         >
-          <div className="w-8 h-8 md:w-10 md:h-10 bg-lume-mint rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-            <span className="text-white font-bold text-lg">L</span>
+          <div className="relative flex items-center">
+            <Flame className="w-8 h-8 md:w-10 md:h-10 text-lume-yellow fill-lume-yellow mr-2" />
+            <div className="flex flex-col leading-none">
+              <span className="font-serif text-2xl md:text-3xl text-black tracking-wide">
+                ESPAÇO
+              </span>
+              <span className="font-serif text-3xl md:text-4xl text-black font-bold -mt-1 md:-mt-2">
+                LUME
+              </span>
+            </div>
           </div>
-          <span className="font-display font-bold text-xl md:text-2xl text-lume-deep-blue tracking-tight">
-            Espaço Lume
-          </span>
         </a>
 
         {/* Desktop Menu */}
@@ -91,7 +96,9 @@ export function Navbar() {
                 'text-sm font-medium transition-colors duration-200 hover:text-lume-mint relative py-1',
                 activeSection === item.href.substring(1)
                   ? 'text-lume-mint font-semibold'
-                  : 'text-lume-deep-blue',
+                  : isScrolled
+                    ? 'text-lume-deep-blue'
+                    : 'text-lume-deep-blue xl:text-white xl:shadow-black/10 xl:drop-shadow-md',
               )}
             >
               {item.name}
@@ -109,9 +116,14 @@ export function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-lume-deep-blue hover:text-lume-mint"
+                className={cn(
+                  'hover:text-lume-mint',
+                  isScrolled
+                    ? 'text-lume-deep-blue'
+                    : 'text-lume-deep-blue md:text-white',
+                )}
               >
-                <Menu className="h-6 w-6" />
+                <Menu className="h-8 w-8" />
                 <span className="sr-only">Abrir menu</span>
               </Button>
             </SheetTrigger>

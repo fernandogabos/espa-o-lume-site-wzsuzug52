@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { Phone, Mail, MapPin, Send, Loader2 } from 'lucide-react'
+import { Phone, Mail, MapPin, Send, Loader2, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -97,7 +97,9 @@ export function Contact() {
                 <div>
                   <h4 className="font-bold text-lume-deep-blue">Endereço</h4>
                   <p className="text-sm text-lume-deep-blue/70">
-                    Vila Arens, Jundiaí - SP
+                    Rua Moreira Cesar, 319, Vila Arens II
+                    <br />
+                    13.202-600 - Jundiai/SP
                   </p>
                 </div>
               </div>
@@ -111,7 +113,7 @@ export function Contact() {
                     Telefone / WhatsApp
                   </h4>
                   <p className="text-sm text-lume-deep-blue/70">
-                    (11) 99999-9999
+                    (11) 99875-4842
                   </p>
                 </div>
               </div>
@@ -124,6 +126,22 @@ export function Contact() {
                   <h4 className="font-bold text-lume-deep-blue">E-mail</h4>
                   <p className="text-sm text-lume-deep-blue/70">
                     contato@espacolume.com.br
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm">
+                <div className="bg-lume-mint/20 p-3 rounded-full">
+                  <Clock className="w-6 h-6 text-lume-deep-blue" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-lume-deep-blue">
+                    Horário de Funcionamento
+                  </h4>
+                  <p className="text-sm text-lume-deep-blue/70">
+                    Seg - Sex: 07h às 21h
+                    <br />
+                    Sáb: 07h às 13h
                   </p>
                 </div>
               </div>
@@ -245,7 +263,7 @@ export function Contact() {
 
       {/* WhatsApp Floating Button */}
       <a
-        href="https://wa.me/5511999999999?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20o%20Espaço%20Lume."
+        href="https://wa.me/5511998754842?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20o%20Espaço%20Lume."
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20bd5a] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 animate-fade-in"

@@ -17,7 +17,8 @@ const rooms = [
     price: 'R$ 2.500',
     description: 'Ideal para atendimentos individuais, psicologia ou nutrição.',
     features: ['Armário embutido', 'Climatizada', 'Iluminação natural'],
-    image: 'https://img.usecurling.com/p/600/400?q=small%20office%20room&dpr=2',
+    image:
+      'https://img.usecurling.com/p/600/400?q=office%20room%20wardrobe&dpr=2',
   },
   {
     title: 'Sala 2',
@@ -26,7 +27,8 @@ const rooms = [
     description:
       'Perfeita para profissionais que buscam um espaço compacto e funcional.',
     features: ['Armário embutido', 'Climatizada', 'Silenciosa'],
-    image: 'https://img.usecurling.com/p/600/400?q=cozy%20office%20room&dpr=2',
+    image:
+      'https://img.usecurling.com/p/600/400?q=small%20office%20room%20cozy&dpr=2',
   },
   {
     title: 'Sala Fundo',
@@ -35,7 +37,8 @@ const rooms = [
     description:
       'Espaço amplo para estúdios, pequenos grupos ou escritórios compartilhados.',
     features: ['Ampla área', 'Privacidade total', 'Banheiro próximo'],
-    image: 'https://img.usecurling.com/p/600/400?q=large%20office%20room&dpr=2',
+    image:
+      'https://img.usecurling.com/p/600/400?q=large%20office%20studio&dpr=2',
   },
 ]
 
@@ -115,7 +118,7 @@ export function Rooms() {
                   onClick={scrollToContact}
                   className="w-full bg-lume-deep-blue hover:bg-lume-deep-blue/90 text-white"
                 >
-                  Tenho Interesse
+                  Agendar Visita ou Solicitar Contato
                 </Button>
               </CardFooter>
             </Card>
