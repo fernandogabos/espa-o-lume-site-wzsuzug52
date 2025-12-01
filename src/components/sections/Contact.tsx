@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/use-toast'
 import { useInView } from '@/hooks/use-in-view'
 import { cn } from '@/lib/utils'
 import { ContactSection, SiteConfig } from '@/types/content'
+import { useCMS } from '@/contexts/CMSContext'
 
 const formSchema = z.object({
   name: z
@@ -40,6 +41,7 @@ export function Contact({
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { ref, hasTriggered } = useInView({ threshold: 0.1 })
+  const { addLeadFromContact } = useCMS()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,21 +56,19 @@ export function Contact({
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
 
-    // Prepare mailto link
-    const subject = encodeURIComponent('Contato pelo Site Espaço Lume')
-    const body = encodeURIComponent(
-      `Nome: ${values.name}\nE-mail: ${values.email}\nTelefone: ${values.phone}\n\nMensagem:\n${values.message}`,
-    )
-    const mailtoLink = `mailto:${config.contact.email}?subject=${subject}&body=${body}`
-
-    // Simulate processing delay for better UX
+    // Add to CRM
     setTimeout(() => {
-      window.location.href = mailtoLink
+      addLeadFromContact(
+        values.name,
+        values.email,
+        values.phone,
+        values.message,
+      )
+
       setIsSubmitting(false)
       toast({
-        title: 'Aplicativo de e-mail aberto!',
-        description:
-          'Por favor, confirme o envio da mensagem no seu aplicativo de e-mail.',
+        title: 'Mensagem enviada com sucesso!',
+        description: 'Recebemos seu contato e retornaremos em breve.',
         duration: 6000,
       })
       form.reset()
@@ -255,7 +255,7 @@ export function Contact({
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Preparando envio...
+                      Enviando...
                     </>
                   ) : (
                     <>

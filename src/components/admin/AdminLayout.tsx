@@ -7,6 +7,7 @@ import {
   Layers,
   LogOut,
   ExternalLink,
+  Kanban,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useEffect } from 'react'
@@ -26,6 +27,7 @@ export function AdminLayout() {
 
   const navItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/admin/crm', label: 'CRM & Tarefas', icon: Kanban },
     { href: '/admin/sections', label: 'Seções e Conteúdo', icon: Layers },
     { href: '/admin/settings', label: 'Configurações Globais', icon: Settings },
   ]
@@ -86,7 +88,7 @@ export function AdminLayout() {
 
       {/* Main Content */}
       <main className="flex-1 ml-64 p-8 overflow-y-auto">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <Outlet />
         </div>
       </main>

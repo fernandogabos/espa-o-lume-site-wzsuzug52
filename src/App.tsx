@@ -15,6 +15,10 @@ import SectionEditor from './pages/admin/SectionEditor'
 import GlobalSettings from './pages/admin/GlobalSettings'
 import { AdminLayout } from './components/admin/AdminLayout'
 
+// CRM Pages
+import CRMBoardList from './pages/admin/crm/CRMBoardList'
+import CRMBoard from './pages/admin/crm/CRMBoard'
+
 const App = () => (
   <CMSProvider>
     <BrowserRouter
@@ -36,6 +40,10 @@ const App = () => (
             <Route path="sections" element={<SectionList />} />
             <Route path="sections/:id" element={<SectionEditor />} />
             <Route path="settings" element={<GlobalSettings />} />
+
+            {/* CRM Routes */}
+            <Route path="crm" element={<CRMBoardList />} />
+            <Route path="crm/board/:boardId" element={<CRMBoard />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
