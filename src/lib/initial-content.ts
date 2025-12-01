@@ -237,8 +237,8 @@ export const initialContent: CMSData = {
           },
           {
             icon: 'Key',
-            title: 'Sublocação',
-            description: 'Possibilidade mediante alinhamento.',
+            title: 'Compartilhamento',
+            description: 'Possibilidade de compartilhamento de sala.',
           },
           {
             icon: 'Shield',

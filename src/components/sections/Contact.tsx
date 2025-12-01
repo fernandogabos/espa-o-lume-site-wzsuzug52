@@ -53,17 +53,26 @@ export function Contact({
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
-    // Simulate API call
+
+    // Prepare mailto link
+    const subject = encodeURIComponent('Contato pelo Site Espaço Lume')
+    const body = encodeURIComponent(
+      `Nome: ${values.name}\nE-mail: ${values.email}\nTelefone: ${values.phone}\n\nMensagem:\n${values.message}`,
+    )
+    const mailtoLink = `mailto:${config.contact.email}?subject=${subject}&body=${body}`
+
+    // Simulate processing delay for better UX
     setTimeout(() => {
-      console.log(values)
+      window.location.href = mailtoLink
       setIsSubmitting(false)
       toast({
-        title: 'Mensagem enviada!',
-        description: 'Entraremos em contato em breve.',
-        duration: 5000,
+        title: 'Aplicativo de e-mail aberto!',
+        description:
+          'Por favor, confirme o envio da mensagem no seu aplicativo de e-mail.',
+        duration: 6000,
       })
       form.reset()
-    }, 2000)
+    }, 1000)
   }
 
   return (
@@ -246,7 +255,7 @@ export function Contact({
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Enviando...
+                      Preparando envio...
                     </>
                   ) : (
                     <>
