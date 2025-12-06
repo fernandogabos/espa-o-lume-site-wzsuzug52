@@ -41,7 +41,7 @@ export function AdminLayout() {
     navigate('/admin/login')
   }
 
-  // If not authenticated, render nothing (or loader) until redirect happens
+  // If not authenticated, render nothing until redirect happens
   if (!isAuthenticated) return null
 
   // If strictly changing password, show a minimal layout or the same layout but restricted

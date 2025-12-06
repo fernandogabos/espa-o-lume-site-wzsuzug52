@@ -65,6 +65,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null)
 
       if (session?.user) {
+        // Note: onAuthStateChange is synchronous in nature regarding the callback execution
+        // preventing strict async/await usage. Fetching profile happens as side effect.
         fetchProfile(session.user.id)
       } else {
         setProfile(null)
@@ -74,11 +76,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     })
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
       if (session?.user) {
-        fetchProfile(session.user.id)
+        await fetchProfile(session.user.id)
       }
       setLoading(false)
     })

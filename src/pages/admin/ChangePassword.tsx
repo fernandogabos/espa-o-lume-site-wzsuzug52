@@ -19,7 +19,7 @@ export default function ChangePassword() {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const { refreshProfile, logout } = useAuth()
+  const { refreshProfile } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,6 +42,7 @@ export default function ChangePassword() {
       await refreshProfile()
       navigate('/admin')
     } catch (error: any) {
+      console.error(error)
       toast.error(error.message || 'Erro ao alterar senha')
     } finally {
       setLoading(false)

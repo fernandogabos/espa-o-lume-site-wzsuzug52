@@ -1,9 +1,6 @@
 import type { Config } from 'tailwindcss'
-import animatePlugin from 'tailwindcss-animate'
-import typographyPlugin from '@tailwindcss/typography'
-import aspectRatioPlugin from '@tailwindcss/aspect-ratio'
 
-export default {
+const config = {
   darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -17,19 +14,10 @@ export default {
       center: true,
       padding: '2rem',
       screens: {
-        sm: '640px',
-        md: '768px',
-        lg: '1024px',
-        xl: '1280px',
         '2xl': '1400px',
       },
     },
     extend: {
-      fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        display: ['Montserrat', 'sans-serif'],
-        serif: ['Playfair Display', 'serif'],
-      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -64,30 +52,23 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        sidebar: {
-          DEFAULT: 'hsl(var(--sidebar-background))',
-          foreground: 'hsl(var(--sidebar-foreground))',
-          primary: 'hsl(var(--sidebar-primary))',
-          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-          accent: 'hsl(var(--sidebar-accent))',
-          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-          border: 'hsl(var(--sidebar-border))',
-          ring: 'hsl(var(--sidebar-ring))',
-        },
-        // Custom Espaço Lume Colors using CSS Variables
         lume: {
-          mint: 'var(--lume-mint)',
-          sky: 'var(--lume-sky)',
-          gray: 'var(--lume-gray)',
-          cream: 'var(--lume-cream)',
-          'deep-blue': 'var(--lume-deep-blue)',
-          yellow: 'var(--lume-yellow)',
+          mint: '#94D1B4',
+          sky: '#AFD9FF',
+          gray: '#E8E8E8',
+          cream: '#F7F3E9',
+          'deep-blue': '#2F4F6F',
+          yellow: '#FFD700',
         },
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        display: ['Playfair Display', 'serif'],
       },
       keyframes: {
         'accordion-down': {
@@ -110,5 +91,7 @@ export default {
       },
     },
   },
-  plugins: [animatePlugin, typographyPlugin, aspectRatioPlugin],
+  plugins: [require('tailwindcss-animate')],
 } satisfies Config
+
+export default config

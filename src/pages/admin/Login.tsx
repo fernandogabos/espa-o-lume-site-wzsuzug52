@@ -45,7 +45,7 @@ export default function Login() {
       })
       setLoading(false)
     } else {
-      // Navigation handled by useEffect
+      // Navigation handled by useEffect once profile is loaded
     }
   }
 
