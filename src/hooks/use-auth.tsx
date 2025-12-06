@@ -42,16 +42,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single()
+        .maybeSingle()
 
       if (error) {
         console.error('Error fetching profile:', error)
         setProfile(null)
-      } else {
+        return
+      }
+
+      if (data) {
         setProfile(data as Profile)
+      } else {
+        // Profile missing, attempt to create it to ensure login success
+        console.log('Profile missing for user, attempting to create...')
+        const { data: newProfile, error: createError } = await supabase
+          .from('profiles')
+          .insert([
+            {
+              id: userId,
+              role: 'editor',
+              first_login_required: true,
+            },
+          ])
+          .select()
+          .single()
+
+        if (createError) {
+          console.error('Error creating profile:', createError)
+          setProfile(null)
+        } else {
+          setProfile(newProfile as Profile)
+        }
       }
     } catch (e) {
-      console.error(e)
+      console.error('Exception in fetchProfile:', e)
       setProfile(null)
     }
   }
