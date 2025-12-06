@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { KeyRound, ShieldAlert } from 'lucide-react'
+import { KeyRound, ShieldAlert, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function ChangePassword() {
@@ -37,9 +37,14 @@ export default function ChangePassword() {
 
     setLoading(true)
     try {
+      // Updates password and sets first_login_required to false
       await updatePassword(newPassword)
       toast.success('Senha alterada com sucesso!')
+
+      // Refresh profile to update context state (first_login_required: false)
       await refreshProfile()
+
+      // Redirect to dashboard
       navigate('/admin')
     } catch (error: any) {
       console.error(error)
@@ -51,9 +56,9 @@ export default function ChangePassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <Card className="w-full max-w-md border-lume-mint border-t-4">
+      <Card className="w-full max-w-md border-lume-mint border-t-4 shadow-lg">
         <CardHeader className="text-center space-y-4">
-          <div className="mx-auto bg-yellow-100 p-4 rounded-full w-fit">
+          <div className="mx-auto bg-yellow-100 p-4 rounded-full w-fit animate-pulse">
             <ShieldAlert className="w-8 h-8 text-yellow-600" />
           </div>
           <div>
@@ -62,7 +67,7 @@ export default function ChangePassword() {
             </CardTitle>
             <CardDescription>
               Para sua segurança, você deve alterar sua senha temporária antes
-              de continuar.
+              de continuar para o painel administrativo.
             </CardDescription>
           </div>
         </CardHeader>
@@ -80,6 +85,7 @@ export default function ChangePassword() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
+                  minLength={6}
                 />
               </div>
             </div>
@@ -95,6 +101,7 @@ export default function ChangePassword() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
+                  minLength={6}
                 />
               </div>
             </div>
@@ -103,7 +110,14 @@ export default function ChangePassword() {
               className="w-full bg-lume-deep-blue hover:bg-lume-deep-blue/90"
               disabled={loading}
             >
-              {loading ? 'Atualizando...' : 'Atualizar Senha'}
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Atualizando...
+                </>
+              ) : (
+                'Atualizar Senha e Entrar'
+              )}
             </Button>
           </form>
         </CardContent>

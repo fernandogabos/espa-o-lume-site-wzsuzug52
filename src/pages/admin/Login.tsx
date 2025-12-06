@@ -9,43 +9,53 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Flame, Lock, Mail } from 'lucide-react'
+import { Flame, Lock, Mail, Loader2, AlertCircle } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { useAuth } from '@/hooks/use-auth'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const { user, profile, signIn } = useAuth()
+  const { user, profile, signIn, loading: authLoading } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
+  const [loginError, setLoginError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (user && profile) {
+    if (user && profile && !authLoading) {
       if (profile.first_login_required) {
         navigate('/admin/change-password')
       } else {
         navigate('/admin')
       }
     }
-  }, [user, profile, navigate])
+  }, [user, profile, authLoading, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setLoginError(null)
 
-    const { error } = await signIn(email, password)
+    try {
+      const { error } = await signIn(email, password)
 
-    if (error) {
-      toast({
-        title: 'Erro ao entrar',
-        description: error.message || 'Verifique suas credenciais',
-        variant: 'destructive',
-      })
+      if (error) {
+        console.error('Login Error:', error)
+        setLoginError(error.message || 'Verifique suas credenciais')
+        toast({
+          title: 'Erro ao entrar',
+          description: error.message || 'Verifique suas credenciais',
+          variant: 'destructive',
+        })
+      }
+      // If success, the useEffect will handle navigation when user state updates
+    } catch (err: any) {
+      console.error('Unexpected Login Error:', err)
+      setLoginError(err.message || 'Ocorreu um erro inesperado')
+    } finally {
       setLoading(false)
-    } else {
-      // Navigation handled by useEffect once profile is loaded
     }
   }
 
@@ -67,6 +77,14 @@ export default function Login() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {loginError && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Erro</AlertTitle>
+                <AlertDescription>{loginError}</AlertDescription>
+              </Alert>
+            )}
+
             <div className="space-y-2">
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -96,9 +114,16 @@ export default function Login() {
             <Button
               type="submit"
               className="w-full bg-lume-deep-blue hover:bg-lume-deep-blue/90"
-              disabled={loading}
+              disabled={loading || authLoading}
             >
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading || authLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Entrando...
+                </>
+              ) : (
+                'Entrar'
+              )}
             </Button>
           </form>
         </CardContent>

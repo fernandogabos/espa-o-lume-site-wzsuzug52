@@ -20,13 +20,14 @@ export const inviteUser = async (params: InviteUserParams) => {
 }
 
 export const updatePassword = async (newPassword: string) => {
+  // 1. Update the password in auth.users
   const { error } = await supabase.auth.updateUser({
     password: newPassword,
   })
 
   if (error) throw error
 
-  // Also update profile to set first_login_required to false
+  // 2. Update profile to set first_login_required to false
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -39,7 +40,9 @@ export const updatePassword = async (newPassword: string) => {
 
     if (profileError) {
       console.error('Error updating profile:', profileError)
-      // We don't throw here to not block the user flow if auth update succeeded
+      throw new Error(
+        'Senha atualizada, mas houve um erro ao atualizar o perfil.',
+      )
     }
   }
 }
