@@ -182,7 +182,7 @@ export default function SectionEditor() {
         <CardContent className="p-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {renderFields()}
-            <div className="flex justify-end pt-4 border-t">
+            <div className="flex justify-end pt-4 border-t sticky bottom-0 bg-white py-4 z-10">
               <Button
                 type="submit"
                 size="lg"

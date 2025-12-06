@@ -39,18 +39,29 @@ export function CompaniesEditor({
   })
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <Label>Título da Seção</Label>
-        <Input {...register('title')} />
-      </div>
-      <div className="space-y-2">
-        <Label>Descrição</Label>
-        <Textarea {...register('description')} />
+    <div className="space-y-6">
+      <div className="grid gap-4">
+        <div className="space-y-2">
+          <Label>Título da Seção</Label>
+          <Input
+            {...register('title')}
+            placeholder="Ex: Parceiros e Profissionais"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>Descrição (Opcional)</Label>
+          <Textarea
+            {...register('description')}
+            placeholder="Breve descrição sobre os parceiros..."
+            className="min-h-[80px]"
+          />
+        </div>
       </div>
 
-      <div className="flex justify-between items-center mt-8">
-        <Label className="text-lg">Empresas e Profissionais</Label>
+      <div className="flex justify-between items-center pt-4 border-t">
+        <Label className="text-lg font-semibold text-lume-deep-blue">
+          Empresas e Profissionais
+        </Label>
         <Button
           type="button"
           variant="outline"
@@ -71,14 +82,18 @@ export function CompaniesEditor({
 
       <div className="space-y-4">
         {fields.map((field, index) => (
-          <Card key={field.id} className="relative group">
+          <Card
+            key={field.id}
+            className="relative group border-l-4 border-l-lume-mint"
+          >
             <CardContent className="p-4 space-y-6">
-              <div className="flex justify-between items-center bg-gray-50 p-2 rounded -mx-4 -mt-4 mb-4 border-b">
-                <div className="flex gap-2">
+              <div className="flex justify-between items-center bg-gray-50/80 p-2 rounded -mx-4 -mt-4 mb-4 border-b">
+                <div className="flex gap-1">
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
+                    className="h-8 w-8"
                     disabled={index === 0}
                     onClick={() => move(index, index - 1)}
                   >
@@ -88,6 +103,7 @@ export function CompaniesEditor({
                     type="button"
                     variant="ghost"
                     size="icon"
+                    className="h-8 w-8"
                     disabled={index === fields.length - 1}
                     onClick={() => move(index, index + 1)}
                   >
@@ -95,22 +111,22 @@ export function CompaniesEditor({
                   </Button>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-full border">
                     <Switch
                       checked={watch(`items.${index}.active`)}
                       onCheckedChange={(checked) =>
                         setValue(`items.${index}.active`, checked)
                       }
                     />
-                    <Label className="text-sm">
-                      {watch(`items.${index}.active`) ? 'Ativo' : 'Inativo'}
+                    <Label className="text-xs font-medium cursor-pointer">
+                      {watch(`items.${index}.active`) ? 'Visível' : 'Oculto'}
                     </Label>
                   </div>
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                    className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8 w-8"
                     onClick={() => remove(index)}
                   >
                     <Trash2 className="w-4 h-4" />
@@ -118,72 +134,84 @@ export function CompaniesEditor({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-6">
                   <div className="space-y-2">
-                    <Label>Nome</Label>
+                    <Label>Nome da Empresa/Profissional</Label>
                     <Input {...register(`items.${index}.name`)} />
                   </div>
                   <div className="space-y-2">
                     <ImagePicker
-                      label="Logotipo / Foto"
+                      label="Logotipo"
                       value={watch(`items.${index}.logos.0`)}
                       onChange={(url) =>
                         setValue(`items.${index}.logos`, [url])
                       }
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Recomendado: Imagem com fundo transparente (PNG).
+                    </p>
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <Label>Contatos</Label>
+                <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+                  <Label className="text-sm font-semibold text-gray-600">
+                    Informações de Contato e Redes Sociais
+                  </Label>
                   <div className="grid gap-3">
-                    <div className="flex items-center gap-2">
-                      <Globe className="w-4 h-4 text-gray-500" />
+                    <div className="flex items-center gap-3">
+                      <Globe className="w-4 h-4 text-gray-400 shrink-0" />
                       <Input
                         placeholder="Website URL"
+                        className="bg-white h-9"
                         {...register(`items.${index}.contact.website`)}
                       />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Instagram className="w-4 h-4 text-gray-500" />
+                    <div className="flex items-center gap-3">
+                      <Instagram className="w-4 h-4 text-gray-400 shrink-0" />
                       <Input
                         placeholder="Instagram URL"
+                        className="bg-white h-9"
                         {...register(`items.${index}.contact.instagram`)}
                       />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <MessageCircle className="w-4 h-4 text-gray-500" />
+                    <div className="flex items-center gap-3">
+                      <MessageCircle className="w-4 h-4 text-gray-400 shrink-0" />
                       <Input
-                        placeholder="WhatsApp (Link ou Número)"
+                        placeholder="WhatsApp (Número ou Link)"
+                        className="bg-white h-9"
                         {...register(`items.${index}.contact.whatsapp`)}
                       />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-gray-500" />
+                    <div className="flex items-center gap-3">
+                      <Mail className="w-4 h-4 text-gray-400 shrink-0" />
                       <Input
                         placeholder="Email"
+                        className="bg-white h-9"
                         {...register(`items.${index}.contact.email`)}
                       />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-gray-500" />
+                    <div className="flex items-center gap-3">
+                      <Phone className="w-4 h-4 text-gray-400 shrink-0" />
                       <Input
                         placeholder="Telefone"
+                        className="bg-white h-9"
                         {...register(`items.${index}.contact.phone`)}
                       />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Facebook className="w-4 h-4 text-gray-500" />
+                    <div className="flex items-center gap-3">
+                      <Facebook className="w-4 h-4 text-gray-400 shrink-0" />
                       <Input
                         placeholder="Facebook URL"
+                        className="bg-white h-9"
                         {...register(`items.${index}.contact.facebook`)}
                       />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Linkedin className="w-4 h-4 text-gray-500" />
+                    <div className="flex items-center gap-3">
+                      <Linkedin className="w-4 h-4 text-gray-400 shrink-0" />
                       <Input
                         placeholder="LinkedIn URL"
+                        className="bg-white h-9"
                         {...register(`items.${index}.contact.linkedin`)}
                       />
                     </div>
@@ -193,6 +221,12 @@ export function CompaniesEditor({
             </CardContent>
           </Card>
         ))}
+
+        {fields.length === 0 && (
+          <div className="text-center py-8 text-gray-500 border-2 border-dashed rounded-lg">
+            Nenhuma empresa cadastrada. Clique em "Adicionar" para começar.
+          </div>
+        )}
       </div>
     </div>
   )

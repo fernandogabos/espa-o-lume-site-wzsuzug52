@@ -32,14 +32,16 @@ export function TestimonialsEditor({
   })
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="space-y-2">
         <Label>Título da Seção</Label>
-        <Input {...register('title')} />
+        <Input {...register('title')} placeholder="Ex: O que dizem sobre nós" />
       </div>
 
-      <div className="flex justify-between items-center mt-8">
-        <Label className="text-lg">Depoimentos</Label>
+      <div className="flex justify-between items-center pt-4 border-t">
+        <Label className="text-lg font-semibold text-lume-deep-blue">
+          Depoimentos
+        </Label>
         <Button
           type="button"
           variant="outline"
@@ -47,30 +49,30 @@ export function TestimonialsEditor({
           onClick={() =>
             append({
               id: Math.random().toString(36).substr(2, 9),
-              name: 'Novo Depoimento',
+              name: 'Novo Cliente',
               role: '',
               content: '',
               rating: 5,
             })
           }
         >
-          <Plus className="w-4 h-4 mr-2" /> Adicionar
+          <Plus className="w-4 h-4 mr-2" /> Adicionar Depoimento
         </Button>
       </div>
 
       <div className="grid gap-6">
         {fields.map((field, index) => (
-          <Card key={field.id}>
+          <Card key={field.id} className="bg-gray-50/50">
             <CardContent className="p-4 space-y-4">
               <div className="flex justify-between items-start">
-                <h4 className="font-medium text-sm text-gray-500">
+                <h4 className="font-medium text-sm text-gray-500 uppercase tracking-wider">
                   Depoimento {index + 1}
                 </h4>
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="text-red-500"
+                  className="text-red-500 hover:bg-red-50 hover:text-red-600"
                   onClick={() => remove(index)}
                 >
                   <Trash2 className="w-4 h-4" />
@@ -79,30 +81,43 @@ export function TestimonialsEditor({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Nome</Label>
-                  <Input {...register(`items.${index}.name`)} />
+                  <Label>Nome do Cliente</Label>
+                  <Input
+                    {...register(`items.${index}.name`)}
+                    placeholder="Ex: Maria Silva"
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label>Cargo / Profissão</Label>
-                  <Input {...register(`items.${index}.role`)} />
+                  <Label>Cargo / Profissão (Opcional)</Label>
+                  <Input
+                    {...register(`items.${index}.role`)}
+                    placeholder="Ex: Psicóloga"
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label>Avaliação (Estrelas)</Label>
+                  <Label>Avaliação</Label>
                   <Select
-                    value={String(watch(`items.${index}.rating`))}
+                    value={String(watch(`items.${index}.rating`) || 5)}
                     onValueChange={(val) =>
                       setValue(`items.${index}.rating`, Number(val))
                     }
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
+                    <SelectTrigger className="bg-white">
+                      <SelectValue placeholder="Selecione a nota" />
                     </SelectTrigger>
                     <SelectContent>
-                      {[1, 2, 3, 4, 5].map((rating) => (
+                      {[5, 4, 3, 2, 1].map((rating) => (
                         <SelectItem key={rating} value={String(rating)}>
                           <div className="flex items-center gap-2">
-                            <span>{rating}</span>
-                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                            <span className="font-medium">{rating}</span>
+                            <div className="flex">
+                              {Array.from({ length: rating }).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className="w-3 h-3 fill-yellow-400 text-yellow-400"
+                                />
+                              ))}
+                            </div>
                           </div>
                         </SelectItem>
                       ))}
@@ -110,13 +125,24 @@ export function TestimonialsEditor({
                   </Select>
                 </div>
                 <div className="col-span-1 md:col-span-2 space-y-2">
-                  <Label>Conteúdo</Label>
-                  <Textarea {...register(`items.${index}.content`)} />
+                  <Label>Conteúdo do Depoimento</Label>
+                  <Textarea
+                    {...register(`items.${index}.content`)}
+                    placeholder="O que o cliente disse..."
+                    className="min-h-[100px] bg-white"
+                  />
                 </div>
               </div>
             </CardContent>
           </Card>
         ))}
+
+        {fields.length === 0 && (
+          <div className="text-center py-8 text-gray-500 border-2 border-dashed rounded-lg">
+            Nenhum depoimento adicionado. Clique em "Adicionar Depoimento" para
+            começar.
+          </div>
+        )}
       </div>
     </div>
   )

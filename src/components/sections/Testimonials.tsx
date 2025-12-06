@@ -19,6 +19,8 @@ export function Testimonials({
 }) {
   const { ref, hasTriggered } = useInView({ threshold: 0.1 })
 
+  if (!content.items || content.items.length === 0) return null
+
   return (
     <section id="testimonials" className="py-20 bg-lume-cream/30">
       <div className="container mx-auto px-4">
@@ -49,7 +51,7 @@ export function Testimonials({
                   key={testimonial.id}
                   className="md:basis-1/2 lg:basis-1/3 p-4"
                 >
-                  <Card className="h-full border-none shadow-md bg-white">
+                  <Card className="h-full border-none shadow-md bg-white hover:shadow-lg transition-shadow">
                     <CardContent className="p-6 flex flex-col h-full">
                       <div className="flex gap-1 mb-4">
                         {Array.from({ length: 5 }).map((_, i) => (
@@ -59,20 +61,20 @@ export function Testimonials({
                               'w-4 h-4',
                               i < testimonial.rating
                                 ? 'fill-yellow-400 text-yellow-400'
-                                : 'text-gray-300',
+                                : 'text-gray-200',
                             )}
                           />
                         ))}
                       </div>
-                      <p className="text-lume-deep-blue/80 italic mb-6 flex-grow">
+                      <p className="text-lume-deep-blue/80 italic mb-6 flex-grow text-sm leading-relaxed">
                         "{testimonial.content}"
                       </p>
-                      <div>
+                      <div className="mt-auto border-t pt-4 border-gray-100">
                         <p className="font-bold text-lume-deep-blue">
                           {testimonial.name}
                         </p>
                         {testimonial.role && (
-                          <p className="text-sm text-lume-deep-blue/60">
+                          <p className="text-xs text-lume-deep-blue/60 font-medium">
                             {testimonial.role}
                           </p>
                         )}
@@ -83,8 +85,8 @@ export function Testimonials({
               ))}
             </CarouselContent>
             <div className="hidden md:block">
-              <CarouselPrevious />
-              <CarouselNext />
+              <CarouselPrevious className="bg-white hover:bg-lume-cream border-lume-gray -left-12" />
+              <CarouselNext className="bg-white hover:bg-lume-cream border-lume-gray -right-12" />
             </div>
           </Carousel>
         </div>
