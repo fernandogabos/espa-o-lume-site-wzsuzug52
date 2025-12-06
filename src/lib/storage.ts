@@ -1,11 +1,11 @@
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
 const BUCKET_NAME = 'lume-assets'
 
 export async function uploadImage(file: File): Promise<string> {
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     throw new Error(
-      'Configuração do Supabase ausente. Verifique as variáveis de ambiente VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.',
+      'Configuração do Supabase ausente. Verifique as variáveis de ambiente VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY.',
     )
   }
 
