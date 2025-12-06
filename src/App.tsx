@@ -14,6 +14,8 @@ import Dashboard from './pages/admin/Dashboard'
 import SectionList from './pages/admin/SectionList'
 import SectionEditor from './pages/admin/SectionEditor'
 import GlobalSettings from './pages/admin/GlobalSettings'
+import ChangePassword from './pages/admin/ChangePassword'
+import Users from './pages/admin/Users'
 import { AdminLayout } from './components/admin/AdminLayout'
 
 // CRM Pages
@@ -42,6 +44,8 @@ const App = () => (
               <Route path="sections" element={<SectionList />} />
               <Route path="sections/:id" element={<SectionEditor />} />
               <Route path="settings" element={<GlobalSettings />} />
+              <Route path="users" element={<Users />} />
+              <Route path="change-password" element={<ChangePassword />} />
 
               {/* CRM Routes */}
               <Route path="crm" element={<CRMBoardList />} />

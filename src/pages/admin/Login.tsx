@@ -1,6 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useCMS } from '@/contexts/CMSContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -18,15 +17,19 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const { isAuthenticated } = useCMS()
-  const { signIn } = useAuth()
+  const { user, profile, signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
 
-  if (isAuthenticated) {
-    navigate('/admin')
-    return null
-  }
+  useEffect(() => {
+    if (user && profile) {
+      if (profile.first_login_required) {
+        navigate('/admin/change-password')
+      } else {
+        navigate('/admin')
+      }
+    }
+  }, [user, profile, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,17 +37,16 @@ export default function Login() {
 
     const { error } = await signIn(email, password)
 
-    if (!error) {
-      toast({ title: 'Login realizado com sucesso!' })
-      navigate('/admin')
-    } else {
+    if (error) {
       toast({
         title: 'Erro ao entrar',
         description: error.message || 'Verifique suas credenciais',
         variant: 'destructive',
       })
+      setLoading(false)
+    } else {
+      // Navigation handled by useEffect
     }
-    setLoading(false)
   }
 
   return (
