@@ -2,7 +2,13 @@ import { useState, useRef, DragEvent, ChangeEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Image as ImageIcon, Upload, Link as LinkIcon, X } from 'lucide-react'
+import {
+  Image as ImageIcon,
+  Upload,
+  Link as LinkIcon,
+  X,
+  Loader2,
+} from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -12,6 +18,8 @@ import {
 } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
+import { uploadImage } from '@/lib/storage'
+import { toast } from 'sonner'
 
 interface ImagePickerProps {
   value: string
@@ -27,6 +35,7 @@ export function ImagePicker({
   const [isOpen, setIsOpen] = useState(false)
   const [urlInput, setUrlInput] = useState(value)
   const [dragActive, setDragActive] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSave = () => {
@@ -44,16 +53,20 @@ export function ImagePicker({
     }
   }
 
-  const processFile = (file: File) => {
+  const processFile = async (file: File) => {
     if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          setUrlInput(e.target.result as string)
-          // Automatically save on upload for better UX in the dialog
-        }
+      try {
+        setIsUploading(true)
+        const url = await uploadImage(file)
+        setUrlInput(url)
+        toast.success('Imagem enviada com sucesso!')
+      } catch (error: any) {
+        console.error(error)
+        toast.error(error.message || 'Erro ao enviar imagem')
+      } finally {
+        setIsUploading(false)
+        setDragActive(false)
       }
-      reader.readAsDataURL(file)
     }
   }
 
@@ -73,7 +86,9 @@ export function ImagePicker({
   }
 
   const triggerFileInput = () => {
-    fileInputRef.current?.click()
+    if (!isUploading) {
+      fileInputRef.current?.click()
+    }
   }
 
   return (
@@ -114,10 +129,11 @@ export function ImagePicker({
                 <TabsContent value="upload" className="space-y-4 py-4">
                   <div
                     className={cn(
-                      'border-2 border-dashed rounded-xl p-8 transition-colors cursor-pointer text-center relative',
+                      'border-2 border-dashed rounded-xl p-8 transition-colors cursor-pointer text-center relative overflow-hidden',
                       dragActive
                         ? 'border-lume-mint bg-lume-mint/10'
                         : 'border-gray-200 hover:bg-gray-50',
+                      isUploading && 'pointer-events-none opacity-80',
                     )}
                     onDragEnter={handleDrag}
                     onDragLeave={handleDrag}
@@ -131,24 +147,37 @@ export function ImagePicker({
                       className="hidden"
                       accept="image/*"
                       onChange={handleFileInput}
+                      disabled={isUploading}
                     />
-                    <Upload
-                      className={cn(
-                        'w-12 h-12 mx-auto mb-2 transition-colors',
-                        dragActive ? 'text-lume-mint' : 'text-gray-400',
-                      )}
-                    />
-                    <p className="text-sm text-gray-600 font-medium">
-                      Clique para selecionar ou arraste um arquivo
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Suporta JPG, PNG, WEBP
-                    </p>
+
+                    {isUploading ? (
+                      <div className="flex flex-col items-center justify-center py-2">
+                        <Loader2 className="w-10 h-10 text-lume-mint animate-spin mb-2" />
+                        <p className="text-sm font-medium text-gray-600">
+                          Enviando imagem...
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <Upload
+                          className={cn(
+                            'w-12 h-12 mx-auto mb-2 transition-colors',
+                            dragActive ? 'text-lume-mint' : 'text-gray-400',
+                          )}
+                        />
+                        <p className="text-sm text-gray-600 font-medium">
+                          Clique para selecionar ou arraste um arquivo
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          Suporta JPG, PNG, WEBP
+                        </p>
+                      </>
+                    )}
                   </div>
 
-                  {urlInput && urlInput.startsWith('data:') && (
-                    <div className="flex items-center gap-3 bg-gray-50 p-2 rounded-lg border">
-                      <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0">
+                  {urlInput && urlInput !== value && !isUploading && (
+                    <div className="flex items-center gap-3 bg-gray-50 p-2 rounded-lg border animate-fade-in">
+                      <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0 bg-white border">
                         <img
                           src={urlInput}
                           alt="Preview"
@@ -156,14 +185,21 @@ export function ImagePicker({
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium truncate">
-                          Imagem selecionada para upload
+                        <p className="text-xs font-medium text-green-600 truncate">
+                          Imagem carregada com sucesso
+                        </p>
+                        <p className="text-[10px] text-gray-400 truncate">
+                          {urlInput}
                         </p>
                       </div>
                     </div>
                   )}
 
-                  <Button onClick={handleSave} className="w-full">
+                  <Button
+                    onClick={handleSave}
+                    className="w-full"
+                    disabled={isUploading}
+                  >
                     Confirmar Upload
                   </Button>
                 </TabsContent>
@@ -188,8 +224,7 @@ export function ImagePicker({
             </DialogContent>
           </Dialog>
           <p className="text-xs text-gray-500 mt-2">
-            Você pode fazer upload de arquivos do seu computador ou colar um
-            link externo.
+            As imagens enviadas são armazenadas de forma segura na nuvem.
           </p>
         </div>
       </div>
