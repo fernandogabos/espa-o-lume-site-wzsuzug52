@@ -3,9 +3,6 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('lume-assets', 'lume-assets', true)
 ON CONFLICT (id) DO NOTHING;
 
--- Ensure RLS is enabled on objects
-ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
-
 -- Remove existing policies to ensure idempotent migration (avoiding errors if they already exist)
 DO $$
 BEGIN
@@ -22,8 +19,6 @@ ON storage.objects FOR SELECT
 USING ( bucket_id = 'lume-assets' );
 
 -- 2. Allow public upload (insert) access
--- Note: In a production environment with auth, you might want to restrict this to authenticated users.
--- Given the current context, we enable public uploads to ensure functionality.
 CREATE POLICY "Public Upload Lume Assets"
 ON storage.objects FOR INSERT
 WITH CHECK ( bucket_id = 'lume-assets' );
