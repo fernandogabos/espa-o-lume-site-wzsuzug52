@@ -10,12 +10,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Flame, Lock } from 'lucide-react'
+import { Flame, Lock, Mail } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function Login() {
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const { login, isAuthenticated } = useCMS()
+  const [loading, setLoading] = useState(false)
+  const { isAuthenticated } = useCMS()
+  const { signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
 
@@ -24,18 +28,23 @@ export default function Login() {
     return null
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (login(password)) {
+    setLoading(true)
+
+    const { error } = await signIn(email, password)
+
+    if (!error) {
       toast({ title: 'Login realizado com sucesso!' })
       navigate('/admin')
     } else {
       toast({
-        title: 'Senha incorreta',
-        description: "Tente 'admin123'",
+        title: 'Erro ao entrar',
+        description: error.message || 'Verifique suas credenciais',
         variant: 'destructive',
       })
     }
+    setLoading(false)
   }
 
   return (
@@ -58,25 +67,37 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  className="pl-9"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   type="password"
-                  placeholder="Senha de acesso"
+                  placeholder="Senha"
                   className="pl-9"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
               </div>
             </div>
             <Button
               type="submit"
               className="w-full bg-lume-deep-blue hover:bg-lume-deep-blue/90"
+              disabled={loading}
             >
-              Entrar
+              {loading ? 'Entrando...' : 'Entrar'}
             </Button>
-            <p className="text-xs text-center text-gray-400">
-              Dica: A senha é admin123
-            </p>
           </form>
         </CardContent>
       </Card>

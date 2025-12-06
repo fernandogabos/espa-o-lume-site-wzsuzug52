@@ -7,11 +7,16 @@ import React, {
 } from 'react'
 import { CMSData, SiteConfig } from '@/types/content'
 import { initialContent } from '@/lib/initial-content'
-import { CRMData, Board, Column, Task, User } from '@/types/crm'
+import { CRMData, Board, Column, Task, User as CRMUser } from '@/types/crm'
 import { toast } from 'sonner'
+import { useAuth } from '@/hooks/use-auth'
+import {
+  saveSiteData,
+  loadSiteData,
+  SITE_DATA_SECTION_NAME,
+} from '@/services/site-data'
 
-// Helper for UUID since we can't import uuid package if not listed,
-// but usually uuid is standard. If not available, I'll use a simple generator.
+// Helper for UUID
 const generateId = () => Math.random().toString(36).substring(2, 9)
 
 const initialCRM: CRMData = {
@@ -74,12 +79,6 @@ const initialCRM: CRMData = {
   ],
 }
 
-const MOCK_USER: User = {
-  id: 'admin-user',
-  name: 'Administrador',
-  role: 'admin',
-}
-
 interface CMSContextType {
   // CMS
   data: CMSData
@@ -88,10 +87,10 @@ interface CMSContextType {
   toggleSectionVisibility: (sectionId: string) => void
   reorderSections: (startIndex: number, endIndex: number) => void
   isAuthenticated: boolean
-  currentUser: User
-  login: (password: string) => boolean
-  logout: () => void
-  saveChanges: () => void
+  currentUser: CRMUser
+  login: (password: string) => Promise<boolean>
+  logout: () => Promise<void>
+  saveChanges: () => Promise<void>
 
   // CRM
   crm: CRMData
@@ -118,19 +117,38 @@ const CMSContext = createContext<CMSContextType | undefined>(undefined)
 export function CMSProvider({ children }: { children: React.ReactNode }) {
   const [data, setData] = useState<CMSData>(initialContent)
   const [crm, setCrm] = useState<CRMData>(initialCRM)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const { user, signIn, signOut } = useAuth()
 
-  // Load from localStorage on mount
+  // Map Supabase user to CRM user
+  const currentUser: CRMUser = {
+    id: user?.id || 'anonymous',
+    name: user?.email || 'Visitante',
+    role: user ? 'admin' : 'user',
+  }
+
+  // Load CMS data from Supabase on mount
   useEffect(() => {
-    const savedData = localStorage.getItem('lume_cms_data')
-    if (savedData) {
+    const loadContent = async () => {
       try {
-        setData(JSON.parse(savedData))
-      } catch (e) {
-        console.error(e)
+        const savedContent = await loadSiteData(SITE_DATA_SECTION_NAME)
+        if (savedContent) {
+          setData(savedContent)
+        } else {
+          // If no content in DB, use initial content
+          setData(initialContent)
+        }
+      } catch (error) {
+        console.error('Failed to load site data:', error)
+        // Fallback to initial content in case of error
+        setData(initialContent)
       }
     }
 
+    loadContent()
+  }, [])
+
+  // Load CRM from localStorage on mount
+  useEffect(() => {
     const savedCRM = localStorage.getItem('lume_crm_data')
     if (savedCRM) {
       try {
@@ -139,22 +157,29 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         console.error(e)
       }
     }
-
-    const auth = localStorage.getItem('lume_cms_auth')
-    if (auth === 'true') {
-      setIsAuthenticated(true)
-    }
   }, [])
 
-  // Auto-save logic
-  const saveChanges = useCallback(() => {
-    localStorage.setItem('lume_cms_data', JSON.stringify(data))
-    localStorage.setItem('lume_crm_data', JSON.stringify(crm))
-  }, [data, crm])
-
+  // Save changes logic
+  // We only auto-save CRM to localStorage. CMS data must be explicitly saved or triggered.
+  // However, the user story implies persistence. We'll make saveChanges persist to DB.
   useEffect(() => {
-    saveChanges()
-  }, [saveChanges])
+    localStorage.setItem('lume_crm_data', JSON.stringify(crm))
+  }, [crm])
+
+  const saveChanges = useCallback(async () => {
+    if (user) {
+      try {
+        await saveSiteData(SITE_DATA_SECTION_NAME, data)
+        toast.success('Alterações salvas na nuvem')
+      } catch (error) {
+        console.error('Error saving changes:', error)
+        toast.error('Erro ao salvar alterações')
+      }
+    } else {
+      // Fallback for unauthenticated users (should not happen in admin)
+      console.warn('User not authenticated, cannot save to database.')
+    }
+  }, [data, user])
 
   // CMS Functions
   const updateConfig = (newConfig: Partial<SiteConfig>) => {
@@ -261,7 +286,6 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   }
 
   const moveColumn = (columnId: string, newIndex: number) => {
-    // Simplified reorder logic
     setCrm((prev) => {
       const column = prev.columns.find((c) => c.id === columnId)
       if (!column) return prev
@@ -293,7 +317,6 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   }
 
   const sendEmailNotification = (task: Task) => {
-    // Mock email sending
     console.log(
       `[MOCK EMAIL] To: contato@espacolume.com.br | Subject: Novo Lead Criado | Body: A new lead "${task.title}" has been created.`,
     )
@@ -315,7 +338,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
       checklist: task.checklist || [],
       comments: task.comments || [],
       attachments: task.attachments || [],
-      order: 0, // Should calculate based on existing, but 0 places at top which is fine
+      order: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       ...task,
@@ -354,7 +377,6 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
       const task = prev.tasks.find((t) => t.id === taskId)
       if (!task) return prev
 
-      // If moving to same column
       if (task.columnId === targetColumnId) {
         const colTasks = prev.tasks
           .filter((t) => t.columnId === targetColumnId)
@@ -374,7 +396,6 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
 
         return { ...prev, tasks: [...otherTasks, ...updatedTasks] }
       } else {
-        // Moving to different column
         const sourceTasks = prev.tasks
           .filter((t) => t.columnId === task.columnId)
           .sort((a, b) => a.order - b.order)
@@ -411,18 +432,15 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     phone: string,
     message: string,
   ) => {
-    // Find "Leads" board or create one
     let leadsBoard = crm.boards.find((b) =>
       b.title.toLowerCase().includes('lead'),
     )
     if (!leadsBoard) {
-      // Fallback to first board
       leadsBoard = crm.boards[0]
     }
 
     if (!leadsBoard) return
 
-    // Find first column
     let firstCol = crm.columns
       .filter((c) => c.boardId === leadsBoard!.id)
       .sort((a, b) => a.order - b.order)[0]
@@ -435,14 +453,13 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         title: `Contato: ${name}`,
         description: `**Nome:** ${name}\n**Email:** ${email}\n**Telefone:** ${phone}\n\n**Mensagem:**\n${message}`,
         priority: 'medium',
-        labels: ['#2F4F6F'], // Deep Blue
+        labels: ['#2F4F6F'],
       },
       true,
-    ) // Enable notification
+    )
   }
 
   const addNewLead = (lead: Partial<Task>) => {
-    // Find "Leads" board or fallback to first
     let leadsBoard = crm.boards.find((b) =>
       b.title.toLowerCase().includes('lead'),
     )
@@ -455,7 +472,6 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    // Find first column
     let firstCol = crm.columns
       .filter((c) => c.boardId === leadsBoard!.id)
       .sort((a, b) => a.order - b.order)[0]
@@ -472,22 +488,21 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         priority: lead.priority || 'medium',
       },
       true,
-    ) // Enable notification
+    )
   }
 
-  // Auth functions
-  const login = (password: string) => {
-    if (password === 'admin123') {
-      setIsAuthenticated(true)
-      localStorage.setItem('lume_cms_auth', 'true')
-      return true
-    }
-    return false
+  // Auth functions wrapping useAuth
+  const login = async (password: string) => {
+    // We use email login now, but for backward compatibility with the UI component that asks for password
+    // we will try to sign in with a default admin email.
+    // In a real scenario, we should update the UI to ask for email and password.
+    // For now, assuming admin@espacolume.com.br
+    const { error } = await signIn('admin@espacolume.com.br', password)
+    return !error
   }
 
-  const logout = () => {
-    setIsAuthenticated(false)
-    localStorage.removeItem('lume_cms_auth')
+  const logout = async () => {
+    await signOut()
   }
 
   return React.createElement(
@@ -499,8 +514,8 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         updateSection,
         toggleSectionVisibility,
         reorderSections,
-        isAuthenticated,
-        currentUser: MOCK_USER,
+        isAuthenticated: !!user,
+        currentUser,
         login,
         logout,
         saveChanges,

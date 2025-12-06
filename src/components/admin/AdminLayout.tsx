@@ -23,7 +23,13 @@ export function AdminLayout() {
     }
   }, [isAuthenticated, navigate])
 
+  // If not authenticated, render nothing (or loader) until redirect happens
   if (!isAuthenticated) return null
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/admin/login')
+  }
 
   const navItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -75,10 +81,7 @@ export function AdminLayout() {
           <Button
             variant="ghost"
             className="w-full justify-start gap-3 text-red-500 hover:text-red-600 hover:bg-red-50"
-            onClick={() => {
-              logout()
-              navigate('/admin/login')
-            }}
+            onClick={handleLogout}
           >
             <LogOut className="w-5 h-5" />
             Sair
