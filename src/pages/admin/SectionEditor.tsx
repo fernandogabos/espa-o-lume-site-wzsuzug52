@@ -4,13 +4,15 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
 import { ImagePicker } from '@/components/admin/ImagePicker'
 import { IconPicker } from '@/components/admin/IconPicker'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { useEffect } from 'react'
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react'
+import { TestimonialsEditor } from '@/components/admin/editors/TestimonialsEditor'
+import { CompaniesEditor } from '@/components/admin/editors/CompaniesEditor'
 
 export default function SectionEditor() {
   const { id } = useParams()
@@ -126,6 +128,26 @@ export default function SectionEditor() {
       case 'gallery':
         return (
           <GalleryEditor
+            control={control}
+            register={register}
+            setValue={setValue}
+            watch={watch}
+          />
+        )
+
+      case 'testimonials':
+        return (
+          <TestimonialsEditor
+            control={control}
+            register={register}
+            setValue={setValue}
+            watch={watch}
+          />
+        )
+
+      case 'companies':
+        return (
+          <CompaniesEditor
             control={control}
             register={register}
             setValue={setValue}
@@ -325,7 +347,6 @@ function RoomsEditor({ control, register, setValue, watch }: any) {
                     onChange={(url) => setValue(`items.${index}.image`, url)}
                   />
                 </div>
-                {/* Features editing could be added here, simplified for now */}
               </div>
             </CardContent>
           </Card>
@@ -335,7 +356,7 @@ function RoomsEditor({ control, register, setValue, watch }: any) {
   )
 }
 
-function GalleryEditor({ control, setValue, watch }: any) {
+function GalleryEditor({ control, setValue, watch, register }: any) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'images',

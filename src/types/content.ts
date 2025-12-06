@@ -28,6 +28,10 @@ export type IconName =
   | 'Bus'
   | 'Building'
   | 'GraduationCap'
+  | 'Linkedin'
+  | 'Globe'
+  | 'MessageCircle'
+  | 'Star'
 
 export interface SiteConfig {
   title: string
@@ -165,6 +169,49 @@ export interface GallerySection extends BaseSection {
   }
 }
 
+export interface TestimonialItem {
+  id: string
+  name: string
+  role?: string
+  content: string
+  rating: number // 1-5
+}
+
+export interface TestimonialsSection extends BaseSection {
+  type: 'testimonials'
+  content: {
+    title: string
+    items: TestimonialItem[]
+  }
+}
+
+export interface CompanyContact {
+  website?: string
+  phone?: string
+  whatsapp?: string
+  email?: string
+  instagram?: string
+  facebook?: string
+  linkedin?: string
+}
+
+export interface CompanyItem {
+  id: string
+  name: string
+  logos: string[] // URLs
+  contact: CompanyContact
+  active: boolean
+}
+
+export interface CompaniesSection extends BaseSection {
+  type: 'companies'
+  content: {
+    title: string
+    description?: string
+    items: CompanyItem[]
+  }
+}
+
 export interface ContactSection extends BaseSection {
   type: 'contact'
   content: {
@@ -183,6 +230,8 @@ export type Section =
   | BenefitsSection
   | LocationSection
   | GallerySection
+  | TestimonialsSection
+  | CompaniesSection
   | ContactSection
 
 export interface CMSData {

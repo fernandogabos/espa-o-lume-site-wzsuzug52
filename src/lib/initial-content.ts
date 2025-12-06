@@ -92,6 +92,41 @@ export const initialContent: CMSData = {
       },
     },
     {
+      id: 'testimonials',
+      type: 'testimonials',
+      isVisible: true,
+      title: 'Depoimentos',
+      content: {
+        title: 'O que dizem sobre nós',
+        items: [
+          {
+            id: 't1',
+            name: 'Dra. Ana Silva',
+            role: 'Psicóloga',
+            content:
+              'Excelente estrutura! Meus pacientes adoram o conforto da sala de espera e a tranquilidade do ambiente.',
+            rating: 5,
+          },
+          {
+            id: 't2',
+            name: 'Carlos Oliveira',
+            role: 'Advogado',
+            content:
+              'A localização é perfeita e a sala de reuniões atende perfeitamente minhas necessidades. Recomendo!',
+            rating: 5,
+          },
+          {
+            id: 't3',
+            name: 'Mariana Santos',
+            role: 'Nutricionista',
+            content:
+              'Ambiente muito acolhedor e profissional. O sistema de agendamento facilita muito meu dia a dia.',
+            rating: 4,
+          },
+        ],
+      },
+    },
+    {
       id: 'structure',
       type: 'structure',
       isVisible: true,
@@ -203,6 +238,39 @@ export const initialContent: CMSData = {
             features: ['Ampla área', 'Privacidade total', 'Banheiro próximo'],
             image:
               'https://img.usecurling.com/p/600/400?q=large%20office%20studio&dpr=2',
+          },
+        ],
+      },
+    },
+    {
+      id: 'companies',
+      type: 'companies',
+      isVisible: true,
+      title: 'Parceiros e Profissionais',
+      content: {
+        title: 'Quem está no Espaço Lume',
+        description: 'Conheça as empresas e profissionais que atuam aqui.',
+        items: [
+          {
+            id: 'c1',
+            name: 'Clínica Bem Estar',
+            logos: ['https://img.usecurling.com/i?q=wellness&color=deepBlue'],
+            contact: {
+              website: 'https://example.com',
+              instagram: 'https://instagram.com',
+              whatsapp: '5511999999999',
+            },
+            active: true,
+          },
+          {
+            id: 'c2',
+            name: 'Advocacia Santos',
+            logos: ['https://img.usecurling.com/i?q=law&color=deepBlue'],
+            contact: {
+              linkedin: 'https://linkedin.com',
+              email: 'contato@santos.adv.br',
+            },
+            active: true,
           },
         ],
       },

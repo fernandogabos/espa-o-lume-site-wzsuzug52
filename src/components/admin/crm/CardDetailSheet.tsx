@@ -34,8 +34,12 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
-import { format } from 'date-fns'
 
 interface CardDetailSheetProps {
   taskId: string | null
@@ -52,10 +56,23 @@ export function CardDetailSheet({
   const [commentText, setCommentText] = useState('')
   const [newChecklistItem, setNewChecklistItem] = useState('')
 
-  const task = crm.tasks.find((t) => t.id === taskId)
+  const task = taskId ? crm.tasks.find((t) => t.id === taskId) : null
   const column = task ? crm.columns.find((c) => c.id === task.columnId) : null
 
-  if (!task || !column) return null
+  if (!task || !column) {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Tarefa não encontrada</SheetTitle>
+            <SheetDescription>
+              A tarefa que você tentou acessar não existe ou foi removida.
+            </SheetDescription>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
+    )
+  }
 
   const handleAddComment = () => {
     if (!commentText.trim()) return
@@ -95,6 +112,12 @@ export function CardDetailSheet({
     })
   }
 
+  // Safe checklist percentage calculation
+  const completedCount = task.checklist.filter((i) => i.completed).length
+  const totalCount = task.checklist.length
+  const percentage =
+    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-2xl w-full flex flex-col p-0 gap-0 bg-gray-50/50">
@@ -114,6 +137,9 @@ export function CardDetailSheet({
               </div>
             </div>
           </SheetTitle>
+          <SheetDescription className="sr-only">
+            Detalhes da tarefa
+          </SheetDescription>
         </SheetHeader>
 
         <ScrollArea className="flex-1">
@@ -145,12 +171,7 @@ export function CardDetailSheet({
                   </div>
                   {task.checklist.length > 0 && (
                     <span className="text-xs font-normal text-muted-foreground">
-                      {Math.round(
-                        (task.checklist.filter((i) => i.completed).length /
-                          task.checklist.length) *
-                          100,
-                      )}
-                      % concluído
+                      {percentage}% concluído
                     </span>
                   )}
                 </div>
@@ -161,7 +182,7 @@ export function CardDetailSheet({
                     <div
                       className="h-full bg-lume-mint transition-all duration-500"
                       style={{
-                        width: `${(task.checklist.filter((i) => i.completed).length / task.checklist.length) * 100}%`,
+                        width: `${percentage}%`,
                       }}
                     />
                   </div>
@@ -364,6 +385,11 @@ export function CardDetailSheet({
                 <Button
                   variant="outline"
                   className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                  onClick={() => {
+                    // In a real app we'd trigger a delete confirmation
+                    // For now just close, as delete needs context function not passed here
+                    onOpenChange(false)
+                  }}
                 >
                   <Trash2 className="w-4 h-4 mr-2" /> Excluir Tarefa
                 </Button>

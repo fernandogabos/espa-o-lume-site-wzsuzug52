@@ -7,6 +7,8 @@ import { Benefits } from '@/components/sections/Benefits'
 import { Location } from '@/components/sections/Location'
 import { Gallery } from '@/components/sections/Gallery'
 import { Contact } from '@/components/sections/Contact'
+import { Testimonials } from '@/components/sections/Testimonials'
+import { Companies } from '@/components/sections/Companies'
 import { useCMS } from '@/contexts/CMSContext'
 
 const Index = () => {
@@ -34,6 +36,10 @@ const Index = () => {
             return <Location key={section.id} content={section.content} />
           case 'gallery':
             return <Gallery key={section.id} content={section.content} />
+          case 'testimonials':
+            return <Testimonials key={section.id} content={section.content} />
+          case 'companies':
+            return <Companies key={section.id} content={section.content} />
           case 'contact':
             return (
               <Contact

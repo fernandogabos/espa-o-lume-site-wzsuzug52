@@ -14,10 +14,11 @@ const navItems = [
   { name: 'Home', href: '#home' },
   { name: 'Quem Somos', href: '#about' },
   { name: 'Estrutura', href: '#structure' },
-  { name: 'Salas Disponíveis', href: '#rooms' },
+  { name: 'Salas', href: '#rooms' },
+  { name: 'Parceiros', href: '#companies' },
   { name: 'Benefícios', href: '#benefits' },
+  { name: 'Depoimentos', href: '#testimonials' },
   { name: 'Localização', href: '#location' },
-  { name: 'Fotos', href: '#gallery' },
   { name: 'Contato', href: '#contact' },
 ]
 
@@ -62,6 +63,14 @@ export function Navbar() {
     }
   }
 
+  // Filter items based on section visibility
+  const visibleNavItems = navItems.filter((item) => {
+    const sectionId = item.href.substring(1)
+    if (sectionId === 'home') return true // Always show home
+    const section = data.sections.find((s) => s.id === sectionId)
+    return section ? section.isVisible : false
+  })
+
   return (
     <nav
       className={cn(
@@ -100,7 +109,7 @@ export function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden xl:flex items-center gap-6">
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <a
               key={item.name}
               href={item.href}
@@ -148,7 +157,7 @@ export function Navbar() {
                 Menu
               </SheetTitle>
               <div className="flex flex-col gap-4 mt-8">
-                {navItems.map((item) => (
+                {visibleNavItems.map((item) => (
                   <a
                     key={item.name}
                     href={item.href}

@@ -8,11 +8,10 @@ import React, {
 import { CMSData, SiteConfig } from '@/types/content'
 import { initialContent } from '@/lib/initial-content'
 import { CRMData, Board, Column, Task, User } from '@/types/crm'
-import { v4 as uuidv4 } from 'uuid'
+import { toast } from 'sonner'
 
 // Helper for UUID since we can't import uuid package if not listed,
 // but usually uuid is standard. If not available, I'll use a simple generator.
-// The prompt didn't list 'uuid' in packages. I will use a simple random ID generator.
 const generateId = () => Math.random().toString(36).substring(2, 9)
 
 const initialCRM: CRMData = {
@@ -102,7 +101,7 @@ interface CMSContextType {
   addColumn: (boardId: string, title: string) => void
   updateColumn: (id: string, updates: Partial<Column>) => void
   moveColumn: (columnId: string, newIndex: number) => void
-  addTask: (task: Partial<Task>) => void
+  addTask: (task: Partial<Task>, notify?: boolean) => void
   updateTask: (id: string, updates: Partial<Task>) => void
   moveTask: (taskId: string, targetColumnId: string, newIndex: number) => void
   addLeadFromContact: (
@@ -111,6 +110,7 @@ interface CMSContextType {
     phone: string,
     message: string,
   ) => void
+  addNewLead: (lead: Partial<Task>) => void
 }
 
 const CMSContext = createContext<CMSContextType | undefined>(undefined)
@@ -292,28 +292,46 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     })
   }
 
-  const addTask = (task: Partial<Task>) => {
+  const sendEmailNotification = (task: Task) => {
+    // Mock email sending
+    console.log(
+      `[MOCK EMAIL] To: contato@espacolume.com.br | Subject: Novo Lead Criado | Body: A new lead "${task.title}" has been created.`,
+    )
+    toast.success(
+      'Notificação por e-mail enviada para contato@espacolume.com.br',
+    )
+  }
+
+  const addTask = (task: Partial<Task>, notify = false) => {
     if (!task.columnId || !task.title) return
+
+    const newTask: Task = {
+      id: generateId(),
+      columnId: task.columnId!,
+      title: task.title!,
+      description: task.description || '',
+      priority: task.priority || 'medium',
+      labels: task.labels || [],
+      checklist: task.checklist || [],
+      comments: task.comments || [],
+      attachments: task.attachments || [],
+      order: 0, // Should calculate based on existing, but 0 places at top which is fine
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ...task,
+    }
 
     setCrm((prev) => {
       const colTasks = prev.tasks.filter((t) => t.columnId === task.columnId)
-      const newTask: Task = {
-        id: generateId(),
-        columnId: task.columnId!,
-        title: task.title!,
-        description: task.description || '',
-        priority: task.priority || 'medium',
-        labels: task.labels || [],
-        checklist: task.checklist || [],
-        comments: task.comments || [],
-        attachments: task.attachments || [],
-        order: colTasks.length,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        ...task,
+      return {
+        ...prev,
+        tasks: [...prev.tasks, { ...newTask, order: colTasks.length }],
       }
-      return { ...prev, tasks: [...prev.tasks, newTask] }
     })
+
+    if (notify) {
+      sendEmailNotification(newTask)
+    }
   }
 
   const updateTask = (id: string, updates: Partial<Task>) => {
@@ -411,13 +429,50 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
 
     if (!firstCol) return
 
-    addTask({
-      columnId: firstCol.id,
-      title: `Contato: ${name}`,
-      description: `**Nome:** ${name}\n**Email:** ${email}\n**Telefone:** ${phone}\n\n**Mensagem:**\n${message}`,
-      priority: 'medium',
-      labels: ['#2F4F6F'], // Deep Blue
-    })
+    addTask(
+      {
+        columnId: firstCol.id,
+        title: `Contato: ${name}`,
+        description: `**Nome:** ${name}\n**Email:** ${email}\n**Telefone:** ${phone}\n\n**Mensagem:**\n${message}`,
+        priority: 'medium',
+        labels: ['#2F4F6F'], // Deep Blue
+      },
+      true,
+    ) // Enable notification
+  }
+
+  const addNewLead = (lead: Partial<Task>) => {
+    // Find "Leads" board or fallback to first
+    let leadsBoard = crm.boards.find((b) =>
+      b.title.toLowerCase().includes('lead'),
+    )
+    if (!leadsBoard) {
+      leadsBoard = crm.boards[0]
+    }
+
+    if (!leadsBoard) {
+      console.error('No board found to add lead')
+      return
+    }
+
+    // Find first column
+    let firstCol = crm.columns
+      .filter((c) => c.boardId === leadsBoard!.id)
+      .sort((a, b) => a.order - b.order)[0]
+
+    if (!firstCol) {
+      console.error('No column found in board to add lead')
+      return
+    }
+
+    addTask(
+      {
+        ...lead,
+        columnId: firstCol.id,
+        priority: lead.priority || 'medium',
+      },
+      true,
+    ) // Enable notification
   }
 
   // Auth functions
@@ -460,6 +515,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         updateTask,
         moveTask,
         addLeadFromContact,
+        addNewLead,
       },
     },
     children,
