@@ -89,14 +89,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null)
 
       if (session?.user) {
-        // Note: onAuthStateChange is synchronous in nature regarding the callback execution
-        // preventing strict async/await usage. Fetching profile happens as side effect.
-        fetchProfile(session.user.id)
+        // Note: onAuthStateChange can be triggered multiple times.
+        // We ensure loading is false only after profile fetch attempt.
+        fetchProfile(session.user.id).finally(() => {
+          setLoading(false)
+        })
       } else {
         setProfile(null)
+        setLoading(false)
       }
-
-      setLoading(false)
     })
 
     // THEN check for existing session
