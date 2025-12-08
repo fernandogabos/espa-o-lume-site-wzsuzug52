@@ -38,21 +38,32 @@ export default function Login() {
     setLoading(true)
     setLoginError(null)
 
+    // Detailed logging for debugging login issues
+    console.log(`[Login] Attempting login for email: ${email}`)
+
     try {
       const { error } = await signIn(email, password)
 
       if (error) {
-        console.error('Login Error:', error)
+        console.error('[Login] Error:', {
+          message: error.message,
+          status: error.status,
+          name: error.name,
+          email: email, // Verify the email being sent
+        })
+
         setLoginError(error.message || 'Verifique suas credenciais')
         toast({
           title: 'Erro ao entrar',
           description: error.message || 'Verifique suas credenciais',
           variant: 'destructive',
         })
+      } else {
+        console.log('[Login] Success for:', email)
+        // If success, the useEffect will handle navigation when user state updates
       }
-      // If success, the useEffect will handle navigation when user state updates
     } catch (err: any) {
-      console.error('Unexpected Login Error:', err)
+      console.error('[Login] Unexpected Error:', err)
       setLoginError(err.message || 'Ocorreu um erro inesperado')
     } finally {
       setLoading(false)
