@@ -42,7 +42,11 @@ Deno.serve(async (req) => {
       })
 
     if (createError) {
-      console.error('Error creating user in Auth:', createError)
+      // Detailed logging for Auth creation error
+      console.error(
+        'Error creating user in Auth:',
+        JSON.stringify(createError, null, 2),
+      )
       throw createError
     }
 
@@ -61,7 +65,11 @@ Deno.serve(async (req) => {
       .single()
 
     if (profileError) {
-      console.error('Error upserting profile:', profileError)
+      // Detailed logging for Profile upsert error
+      console.error(
+        'Error upserting profile:',
+        JSON.stringify(profileError, null, 2),
+      )
       // We log the error but we don't necessarily want to rollback the auth creation in this simple script,
       // though in production you might want a transaction or cleanup.
       throw new Error(
@@ -88,6 +96,7 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({
         error: error.message || 'An unexpected error occurred',
+        details: error,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
