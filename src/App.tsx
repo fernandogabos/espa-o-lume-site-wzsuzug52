@@ -4,23 +4,23 @@ import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { CMSProvider } from '@/contexts/CMSContext'
 import { AuthProvider } from '@/hooks/use-auth'
-import Index from './pages/Index'
-import NotFound from './pages/NotFound'
-import Layout from './components/Layout'
+import Index from '@/pages/Index'
+import NotFound from '@/pages/NotFound'
+import Layout from '@/components/Layout'
 
 // Admin Pages
-import Login from './pages/admin/Login'
-import Dashboard from './pages/admin/Dashboard'
-import SectionList from './pages/admin/SectionList'
-import SectionEditor from './pages/admin/SectionEditor'
-import GlobalSettings from './pages/admin/GlobalSettings'
-import ChangePassword from './pages/admin/ChangePassword'
-import Users from './pages/admin/Users'
-import { AdminLayout } from './components/admin/AdminLayout'
+import Login from '@/pages/admin/Login'
+import Dashboard from '@/pages/admin/Dashboard'
+import SectionList from '@/pages/admin/SectionList'
+import SectionEditor from '@/pages/admin/SectionEditor'
+import GlobalSettings from '@/pages/admin/GlobalSettings'
+import ChangePassword from '@/pages/admin/ChangePassword'
+import Users from '@/pages/admin/Users'
+import { AdminLayout } from '@/components/admin/AdminLayout'
 
 // CRM Pages
-import CRMBoardList from './pages/admin/crm/CRMBoardList'
-import CRMBoard from './pages/admin/crm/CRMBoard'
+import CRMBoardList from '@/pages/admin/crm/CRMBoardList'
+import CRMBoard from '@/pages/admin/crm/CRMBoard'
 
 const App = () => (
   <AuthProvider>
@@ -52,6 +52,7 @@ const App = () => (
               <Route path="crm/board/:boardId" element={<CRMBoard />} />
             </Route>
 
+            {/* Catch-all Route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
