@@ -58,7 +58,11 @@ export default function Login() {
       console.log('[AutoLogin] Starting automatic login bypass...')
 
       try {
-        const { error } = await signIn('fernando.gabos@hotmail.com', 'Admin123')
+        // Updated credentials to match the fixed admin user
+        const { error } = await signIn(
+          'fernando.gabos@innovagrupo.com.br',
+          '123456a!',
+        )
 
         if (error) {
           console.error('[AutoLogin] Failed:', error)
