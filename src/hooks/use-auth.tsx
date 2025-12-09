@@ -38,41 +38,45 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchProfile = async (userId: string) => {
     try {
+      // Updated to use .single() to strictly fetch one profile as requested
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .maybeSingle()
+        .single()
 
       if (error) {
-        console.error('Error fetching profile:', error)
-        setProfile(null)
+        // Handle case where profile does not exist (PGRST116: JSON object requested, multiple (or no) rows returned)
+        if (error.code === 'PGRST116') {
+          console.log('Profile missing (PGRST116), attempting to create...')
+
+          const { data: newProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert([
+              {
+                id: userId,
+                role: 'editor',
+                first_login_required: true,
+              },
+            ])
+            .select()
+            .single()
+
+          if (createError) {
+            console.error('Error creating profile:', createError)
+            setProfile(null)
+          } else {
+            setProfile(newProfile as Profile)
+          }
+        } else {
+          console.error('Error fetching profile:', error)
+          setProfile(null)
+        }
         return
       }
 
       if (data) {
         setProfile(data as Profile)
-      } else {
-        // Profile missing, attempt to create it to ensure login success
-        console.log('Profile missing for user, attempting to create...')
-        const { data: newProfile, error: createError } = await supabase
-          .from('profiles')
-          .insert([
-            {
-              id: userId,
-              role: 'editor',
-              first_login_required: true,
-            },
-          ])
-          .select()
-          .single()
-
-        if (createError) {
-          console.error('Error creating profile:', createError)
-          setProfile(null)
-        } else {
-          setProfile(newProfile as Profile)
-        }
       }
     } catch (e) {
       console.error('Exception in fetchProfile:', e)
