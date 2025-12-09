@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -23,10 +23,6 @@ export default function Login() {
   const { toast } = useToast()
   const [loginError, setLoginError] = useState<string | null>(null)
 
-  // Auto-login specific state
-  const [isAutoLoggingIn, setIsAutoLoggingIn] = useState(true)
-  const attemptRef = useRef(false)
-
   // Handle redirects when user is authenticated
   useEffect(() => {
     if (user && profile && !authLoading) {
@@ -37,58 +33,12 @@ export default function Login() {
       }
     } else if (user && !profile && !authLoading) {
       // Edge case: User exists but profile failed to load
-      setLoginError('Erro ao carregar perfil do usuário.')
-      setIsAutoLoggingIn(false)
+      // This often happens if RLS blocks access or profile creation failed
+      console.warn(
+        'User authenticated but profile not found. Check RLS policies.',
+      )
     }
   }, [user, profile, authLoading, navigate])
-
-  // Handle Automatic Login Bypass
-  useEffect(() => {
-    // If auth is still loading, wait
-    if (authLoading) return
-
-    // If user is already logged in, we don't need to auto-login
-    if (user) return
-
-    // If already attempted, don't try again
-    if (attemptRef.current) return
-
-    const performAutoLogin = async () => {
-      attemptRef.current = true
-      console.log('[AutoLogin] Starting automatic login bypass...')
-
-      try {
-        // Updated credentials to match the fixed admin user
-        const { error } = await signIn(
-          'fernando.gabos@innovagrupo.com.br',
-          '123456a!',
-        )
-
-        if (error) {
-          console.error('[AutoLogin] Failed:', error)
-          setLoginError(
-            'Login automático falhou. Por favor, entre manualmente.',
-          )
-          setIsAutoLoggingIn(false)
-          toast({
-            title: 'Erro no Login Automático',
-            description:
-              error.message || 'Credenciais inválidas ou erro no servidor.',
-            variant: 'destructive',
-          })
-        } else {
-          console.log('[AutoLogin] Success')
-          // We stay in "isAutoLoggingIn" state until the redirect happens via the other useEffect
-        }
-      } catch (err: any) {
-        console.error('[AutoLogin] Unexpected Error:', err)
-        setLoginError('Erro inesperado durante o login automático.')
-        setIsAutoLoggingIn(false)
-      }
-    }
-
-    performAutoLogin()
-  }, [authLoading, user, signIn, toast])
 
   // Manual Login Handler
   const handleSubmit = async (e: React.FormEvent) => {
@@ -120,16 +70,11 @@ export default function Login() {
     }
   }
 
-  // Render Loading / Auto Login Screen
+  // Render Loading Screen
   // Shows if:
   // 1. Auth is initial loading
-  // 2. Auto login is attempting and we don't have an error yet
-  // 3. User is logged in but profile is still loading (waiting for redirect)
-  if (
-    authLoading ||
-    (isAutoLoggingIn && !loginError) ||
-    (user && !profile && !loginError)
-  ) {
+  // 2. User is logged in but profile is still loading (waiting for redirect)
+  if (authLoading || (user && !profile)) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
         <div className="bg-lume-mint/20 p-6 rounded-full animate-pulse mb-6">
@@ -140,14 +85,14 @@ export default function Login() {
         </h2>
         <div className="flex items-center text-lume-deep-blue/80 gap-2">
           <Loader2 className="w-5 h-5 animate-spin" />
-          <span>Acessando sistema automaticamente...</span>
+          <span>Carregando sistema...</span>
         </div>
         <p className="text-sm text-gray-400 mt-2">Aguarde um momento.</p>
       </div>
     )
   }
 
-  // Render Standard Login Form (Fallback)
+  // Render Standard Login Form
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <Card className="w-full max-w-md">
@@ -211,7 +156,7 @@ export default function Login() {
                   Entrando...
                 </>
               ) : (
-                'Entrar Manualmente'
+                'Entrar'
               )}
             </Button>
           </form>
