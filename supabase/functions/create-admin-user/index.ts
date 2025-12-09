@@ -2,7 +2,27 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 
-console.log('Hello from create-admin-user!')
+/**
+ * INSTRUCTIONS TO INVOKE THIS FUNCTION FOR SPECIFIC USER CREATION:
+ *
+ * To create the administrative user 'fernando.gabos@innovagrupo.com.br' with the required role and credentials,
+ * execute the following cURL command in your terminal.
+ *
+ * Make sure to replace <PROJECT_REF> and <SUPABASE_SERVICE_ROLE_KEY> with your actual project values.
+ *
+ * curl -i --location --request POST 'https://<PROJECT_REF>.supabase.co/functions/v1/create-admin-user' \
+ *   --header 'Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>' \
+ *   --header 'Content-Type: application/json' \
+ *   --data '{
+ *     "email": "fernando.gabos@innovagrupo.com.br",
+ *     "password": "123456a!"
+ *   }'
+ *
+ * This command will:
+ * 1. Create the user in Supabase Auth.
+ * 2. Mark the email as confirmed.
+ * 3. Assign the 'admin' role to the user's profile.
+ */
 
 Deno.serve(async (req) => {
   // Handle CORS preflight request
@@ -12,6 +32,7 @@ Deno.serve(async (req) => {
 
   try {
     // Initialize Supabase client with Service Role Key for admin privileges
+    // This is required to bypass RLS and perform admin actions like createUser and updating profiles
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
@@ -24,36 +45,53 @@ Deno.serve(async (req) => {
     )
 
     // Parse request body
-    const { email, password, email_confirm } = await req.json()
+    const { email, password } = await req.json()
 
     if (!email || !password) {
-      throw new Error('Email and password are required')
+      return new Response(
+        JSON.stringify({ error: 'Email and password are required' }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        },
+      )
     }
 
     console.log(`Attempting to create admin user: ${email}`)
 
     // 1. Create user in Auth using Admin API
+    // We explicitly set email_confirm to true and assign admin role in metadata
     const { data: userData, error: createError } =
       await supabaseClient.auth.admin.createUser({
         email,
         password,
-        email_confirm: email_confirm ?? true,
+        email_confirm: true,
         user_metadata: { role: 'admin' },
       })
 
     if (createError) {
-      // Detailed logging for Auth creation error
       console.error(
         'Error creating user in Auth:',
         JSON.stringify(createError, null, 2),
       )
-      throw createError
+      // Return the complete and unaltered error message from Supabase API
+      return new Response(
+        JSON.stringify({
+          error: createError.message,
+          details: createError,
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        },
+      )
     }
 
     const userId = userData.user.id
     console.log(`User successfully created in Auth with ID: ${userId}`)
 
-    // 2. Create or Update Profile with admin role and forced first login
+    // 2. Create or Update Profile with admin role
+    // This ensures the profile exists and has the correct role immediately
     const { error: profileError } = await supabaseClient
       .from('profiles')
       .upsert({
@@ -65,15 +103,20 @@ Deno.serve(async (req) => {
       .single()
 
     if (profileError) {
-      // Detailed logging for Profile upsert error
       console.error(
         'Error upserting profile:',
         JSON.stringify(profileError, null, 2),
       )
-      // We log the error but we don't necessarily want to rollback the auth creation in this simple script,
-      // though in production you might want a transaction or cleanup.
-      throw new Error(
-        `User created but profile update failed: ${profileError.message}`,
+      // Return the complete and unaltered error message from Supabase API
+      return new Response(
+        JSON.stringify({
+          error: profileError.message,
+          details: profileError,
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        },
       )
     }
 
@@ -83,7 +126,7 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        message: `Admin user ${email} created successfully`,
+        message: `Admin user ${email} created successfully and role assigned.`,
         user: userData.user,
       }),
       {
@@ -100,7 +143,7 @@ Deno.serve(async (req) => {
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
+        status: 500,
       },
     )
   }

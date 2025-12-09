@@ -1,31 +1,25 @@
 import { supabase } from '@/lib/supabase/client'
 
-export interface CreateAdminUserParams {
-  email: string
-  password: string
-}
-
-export const createAdminUser = async ({
-  email,
-  password,
-}: CreateAdminUserParams) => {
+/**
+ * Invokes the 'create-admin-user' edge function to create a new admin user.
+ *
+ * @param email The email of the new admin user.
+ * @param password The password for the new admin user.
+ * @returns The response data from the edge function.
+ */
+export const createAdminUser = async (email: string, password: string) => {
   const { data, error } = await supabase.functions.invoke('create-admin-user', {
-    body: {
-      email,
-      password,
-      email_confirm: true,
-    },
+    body: { email, password },
   })
 
   if (error) {
-    console.error('Error invoking create-admin-user:', error)
-    return { data: null, error }
+    throw error
   }
 
-  // The edge function might return an error in the body even if the invoke itself "succeeded" (200 OK but with error field, or 400 Bad Request)
-  // Our edge function returns 400 status on error, so supabase.functions.invoke should catch it as an error?
-  // Actually invoke returns { data, error } where error is populated if status is not 2xx.
-  // But let's check the data for application level error just in case.
+  // Check if the function returned an application-level error
+  if (data && data.error) {
+    throw new Error(data.error)
+  }
 
-  return { data, error: null }
+  return data
 }

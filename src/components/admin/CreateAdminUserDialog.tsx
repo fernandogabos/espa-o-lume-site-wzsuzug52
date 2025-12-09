@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Plus, UserPlus } from 'lucide-react'
+import * as z from 'zod'
+import { Loader2, Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -17,13 +17,14 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { useToast } from '@/hooks/use-toast'
+import { toast } from '@/hooks/use-toast'
 import { createAdminUser } from '@/services/admin'
 
 const formSchema = z.object({
@@ -31,14 +32,11 @@ const formSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
 })
 
-type FormValues = z.infer<typeof formSchema>
-
 export function CreateAdminUserDialog() {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
 
-  const form = useForm<FormValues>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
@@ -46,25 +44,21 @@ export function CreateAdminUserDialog() {
     },
   })
 
-  const onSubmit = async (values: FormValues) => {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true)
     try {
-      const { data, error } = await createAdminUser(values)
-
-      if (error) {
-        throw new Error(error.message || 'Failed to create admin user')
-      }
-
+      await createAdminUser(values.email, values.password)
       toast({
-        title: 'Success',
-        description: `Admin user ${values.email} created successfully.`,
+        title: 'Admin user created',
+        description: `Successfully created admin user ${values.email}`,
       })
       setOpen(false)
       form.reset()
-    } catch (err: any) {
+    } catch (error: any) {
+      console.error(error)
       toast({
-        title: 'Error',
-        description: err.message,
+        title: 'Error creating user',
+        description: error.message || 'Something went wrong. Please try again.',
         variant: 'destructive',
       })
     } finally {
@@ -76,15 +70,15 @@ export function CreateAdminUserDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <UserPlus className="mr-2 h-4 w-4" />
-          Create Admin
+          <Plus className="mr-2 h-4 w-4" /> Create Admin
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create Admin User</DialogTitle>
           <DialogDescription>
-            Create a new user with administrator privileges.
+            Create a new user with administrative privileges. This user will
+            have full access to the admin panel.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -111,6 +105,9 @@ export function CreateAdminUserDialog() {
                   <FormControl>
                     <Input type="password" placeholder="******" {...field} />
                   </FormControl>
+                  <FormDescription>
+                    Must be at least 6 characters long.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
