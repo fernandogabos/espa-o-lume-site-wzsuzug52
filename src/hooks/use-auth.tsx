@@ -39,7 +39,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const fetchProfile = async (userId: string) => {
     console.log('[Auth] fetchProfile started for userId:', userId)
     try {
-      // Updated to use .single() to strictly fetch one profile as requested
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -61,12 +60,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             '[Auth] Profile missing (PGRST116), attempting to create...',
           )
 
+          // Attempt to get role from user metadata if available
+          const {
+            data: { user: currentUser },
+          } = await supabase.auth.getUser()
+          const role = currentUser?.user_metadata?.role || 'editor'
+
           const { data: newProfile, error: createError } = await supabase
             .from('profiles')
             .insert([
               {
                 id: userId,
-                role: 'editor',
+                role: role,
                 first_login_required: true,
               },
             ])
