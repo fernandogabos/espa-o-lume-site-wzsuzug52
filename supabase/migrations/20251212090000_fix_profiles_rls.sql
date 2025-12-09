@@ -3,18 +3,8 @@
 -- Enable pgcrypto for password hashing
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- 1. Ensure id column type is UUID
--- This casts the column to UUID if it isn't already, ensuring type consistency
-ALTER TABLE public.profiles ALTER COLUMN id TYPE uuid USING id::uuid;
-
--- 2. Clean up orphaned profiles
--- Remove any profiles that do not have a corresponding user in auth.users
-DELETE FROM public.profiles WHERE id NOT IN (SELECT id FROM auth.users);
-
--- 3. Enable RLS
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-
--- 4. Drop existing policies (covering both provided names and previous migration names)
+-- 1. Drop existing policies (covering both provided names and previous migration names)
+-- MUST be done BEFORE altering the column type because policies depend on the column
 DROP POLICY IF EXISTS "allow_select_authenticated" ON public.profiles;
 DROP POLICY IF EXISTS "service_role_can_insert" ON public.profiles;
 DROP POLICY IF EXISTS "allow_insert_authenticated" ON public.profiles;
@@ -31,6 +21,17 @@ DROP POLICY IF EXISTS "select_own_profile" ON public.profiles;
 DROP POLICY IF EXISTS "select_profiles_admins" ON public.profiles;
 DROP POLICY IF EXISTS "insert_own_profile" ON public.profiles;
 DROP POLICY IF EXISTS "update_own_profile" ON public.profiles;
+
+-- 2. Ensure id column type is UUID
+-- This casts the column to UUID if it isn't already, ensuring type consistency
+ALTER TABLE public.profiles ALTER COLUMN id TYPE uuid USING id::uuid;
+
+-- 3. Clean up orphaned profiles
+-- Remove any profiles that do not have a corresponding user in auth.users
+DELETE FROM public.profiles WHERE id NOT IN (SELECT id FROM auth.users);
+
+-- 4. Enable RLS
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 -- 5. Create new policies as specified
 
