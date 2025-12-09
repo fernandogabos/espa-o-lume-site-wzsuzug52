@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true)
 
   const fetchProfile = async (userId: string) => {
+    console.log('[Auth] fetchProfile started for userId:', userId)
     try {
       // Updated to use .single() to strictly fetch one profile as requested
       const { data, error } = await supabase
@@ -46,9 +47,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .single()
 
       if (error) {
+        console.error('[Auth] Error fetching profile:', error)
+        console.error('[Auth] Error details:', {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+        })
+
         // Handle case where profile does not exist (PGRST116: JSON object requested, multiple (or no) rows returned)
         if (error.code === 'PGRST116') {
-          console.log('Profile missing (PGRST116), attempting to create...')
+          console.log(
+            '[Auth] Profile missing (PGRST116), attempting to create...',
+          )
 
           const { data: newProfile, error: createError } = await supabase
             .from('profiles')
@@ -63,23 +74,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             .single()
 
           if (createError) {
-            console.error('Error creating profile:', createError)
+            console.error('[Auth] Error creating profile:', createError)
             setProfile(null)
           } else {
+            console.log('[Auth] Profile created successfully:', newProfile)
             setProfile(newProfile as Profile)
           }
         } else {
-          console.error('Error fetching profile:', error)
           setProfile(null)
         }
+        console.log('[Auth] fetchProfile finished (with error path)')
         return
       }
 
       if (data) {
+        console.log('[Auth] Profile fetched successfully:', data)
         setProfile(data as Profile)
       }
+      console.log('[Auth] fetchProfile finished (success path)')
     } catch (e) {
-      console.error('Exception in fetchProfile:', e)
+      console.error('[Auth] Exception in fetchProfile:', e)
       setProfile(null)
     }
   }

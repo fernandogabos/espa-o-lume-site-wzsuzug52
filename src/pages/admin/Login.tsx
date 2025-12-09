@@ -25,6 +25,12 @@ export default function Login() {
 
   // Handle redirects when user is authenticated
   useEffect(() => {
+    console.log('[Login] Auth State Check:', {
+      userId: user?.id,
+      profile,
+      authLoading,
+    })
+
     if (user && profile && !authLoading) {
       if (profile.first_login_required) {
         navigate('/admin/change-password')
