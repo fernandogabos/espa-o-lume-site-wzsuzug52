@@ -31,11 +31,14 @@ export async function uploadImage(file: File): Promise<string> {
 
       if (error) {
         uploadError = error
-        // Only retry on network errors or timeouts
-        if (
-          error.message === 'Failed to fetch' ||
-          error.message.includes('timeout')
-        ) {
+        const errorMessage = error.message || ''
+        // Check for network errors (fetch failures)
+        const isNetworkError =
+          errorMessage === 'Failed to fetch' ||
+          errorMessage.includes('timeout') ||
+          errorMessage.includes('Network request failed')
+
+        if (isNetworkError) {
           retryCount++
           console.warn(`Upload attempt ${retryCount} failed. Retrying...`)
           if (retryCount < maxRetries) {
@@ -57,11 +60,14 @@ export async function uploadImage(file: File): Promise<string> {
       return publicUrlData.publicUrl
     } catch (err: any) {
       uploadError = err
+      const errorMessage = err.message || ''
+      const isNetworkError =
+        errorMessage === 'Failed to fetch' ||
+        errorMessage?.includes('timeout') ||
+        errorMessage?.includes('Network request failed')
+
       // Catch unexpected errors (like network exceptions if SDK throws)
-      if (
-        err.message === 'Failed to fetch' ||
-        err.message?.includes('timeout')
-      ) {
+      if (isNetworkError) {
         retryCount++
         console.warn(
           `Upload attempt ${retryCount} failed with exception. Retrying...`,
@@ -79,15 +85,21 @@ export async function uploadImage(file: File): Promise<string> {
   if (uploadError) {
     console.error('Supabase Storage Upload Error:', uploadError)
 
-    // Handle "Failed to fetch" specifically
-    if (uploadError.message === 'Failed to fetch') {
+    const errorMessage = uploadError.message || ''
+
+    // Handle "Failed to fetch" specifically (using includes for safety)
+    if (
+      errorMessage.includes('Failed to fetch') ||
+      errorMessage.includes('Network request failed') ||
+      errorMessage.includes('timeout')
+    ) {
       throw new Error(
         'Falha na conexão ao enviar imagem. Verifique se você está conectado e se o bloqueador de anúncios não está interferindo.',
       )
     }
 
     // Handle specific bucket not found error
-    if (uploadError.message.includes('Bucket not found')) {
+    if (errorMessage.includes('Bucket not found')) {
       throw new Error(
         'Erro de configuração: O bucket de armazenamento não foi encontrado.',
       )
@@ -95,9 +107,7 @@ export async function uploadImage(file: File): Promise<string> {
 
     // Handle permission errors (RLS)
     if (
-      uploadError.message.includes(
-        'new row violates row-level security policy',
-      ) ||
+      errorMessage.includes('new row violates row-level security policy') ||
       (uploadError as any).statusCode === '403'
     ) {
       throw new Error(
@@ -105,7 +115,7 @@ export async function uploadImage(file: File): Promise<string> {
       )
     }
 
-    throw new Error(`Erro no upload: ${uploadError.message}`)
+    throw new Error(`Erro no upload: ${errorMessage}`)
   }
 
   // Should not happen if loop logic is correct and success returns
