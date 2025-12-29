@@ -6,8 +6,8 @@ import {
   Image as ImageIcon,
   Upload,
   Link as LinkIcon,
-  X,
   Loader2,
+  CheckCircle2,
 } from 'lucide-react'
 import {
   Dialog,
@@ -36,11 +36,23 @@ export function ImagePicker({
   const [urlInput, setUrlInput] = useState(value)
   const [dragActive, setDragActive] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+  const [uploadSuccess, setUploadSuccess] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Reset state when dialog opens
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open)
+    if (open) {
+      setUrlInput(value)
+      setUploadSuccess(false)
+      setIsUploading(false)
+    }
+  }
 
   const handleSave = () => {
     onChange(urlInput)
     setIsOpen(false)
+    toast.success('Imagem selecionada com sucesso')
   }
 
   const handleDrag = (e: DragEvent<HTMLDivElement>) => {
@@ -54,19 +66,25 @@ export function ImagePicker({
   }
 
   const processFile = async (file: File) => {
-    if (file && file.type.startsWith('image/')) {
-      try {
-        setIsUploading(true)
-        const url = await uploadImage(file)
-        setUrlInput(url)
-        toast.success('Imagem enviada com sucesso!')
-      } catch (error: any) {
-        console.error(error)
-        toast.error(error.message || 'Erro ao enviar imagem')
-      } finally {
-        setIsUploading(false)
-        setDragActive(false)
-      }
+    if (!file.type.startsWith('image/')) {
+      toast.error('Por favor, selecione um arquivo de imagem válido.')
+      return
+    }
+
+    try {
+      setIsUploading(true)
+      setUploadSuccess(false)
+      const url = await uploadImage(file)
+      setUrlInput(url)
+      setUploadSuccess(true)
+      toast.success('Imagem enviada com sucesso!')
+    } catch (error: any) {
+      console.error(error)
+      toast.error(error.message || 'Erro ao enviar imagem')
+      setUploadSuccess(false)
+    } finally {
+      setIsUploading(false)
+      setDragActive(false)
     }
   }
 
@@ -82,6 +100,10 @@ export function ImagePicker({
   const handleFileInput = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       processFile(e.target.files[0])
+    }
+    // Reset value so same file can be selected again if needed
+    if (e.target) {
+      e.target.value = ''
     }
   }
 
@@ -109,7 +131,7 @@ export function ImagePicker({
           )}
         </div>
         <div className="flex-1">
-          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
               <Button variant="outline" className="w-full sm:w-auto">
                 <Upload className="w-4 h-4 mr-2" />
@@ -133,7 +155,8 @@ export function ImagePicker({
                       dragActive
                         ? 'border-lume-mint bg-lume-mint/10'
                         : 'border-gray-200 hover:bg-gray-50',
-                      isUploading && 'pointer-events-none opacity-80',
+                      isUploading && 'pointer-events-none opacity-50',
+                      uploadSuccess && 'border-green-500 bg-green-50',
                     )}
                     onDragEnter={handleDrag}
                     onDragLeave={handleDrag}
@@ -157,6 +180,16 @@ export function ImagePicker({
                           Enviando imagem...
                         </p>
                       </div>
+                    ) : uploadSuccess ? (
+                      <div className="flex flex-col items-center justify-center py-2 animate-fade-in">
+                        <CheckCircle2 className="w-10 h-10 text-green-500 mb-2" />
+                        <p className="text-sm font-medium text-green-700">
+                          Upload concluído!
+                        </p>
+                        <p className="text-xs text-green-600 mt-1">
+                          Clique em Confirmar para usar esta imagem.
+                        </p>
+                      </div>
                     ) : (
                       <>
                         <Upload
@@ -169,7 +202,7 @@ export function ImagePicker({
                           Clique para selecionar ou arraste um arquivo
                         </p>
                         <p className="text-xs text-gray-400 mt-1">
-                          Suporta JPG, PNG, WEBP
+                          Suporta JPG, PNG, WEBP (Máx 5MB)
                         </p>
                       </>
                     )}
@@ -200,7 +233,14 @@ export function ImagePicker({
                     className="w-full"
                     disabled={isUploading}
                   >
-                    Confirmar Upload
+                    {isUploading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Enviando...
+                      </>
+                    ) : (
+                      'Confirmar Upload'
+                    )}
                   </Button>
                 </TabsContent>
 
