@@ -59,10 +59,23 @@ export default function Login() {
 
       if (error) {
         console.error('[Login] Error:', error)
-        setLoginError(error.message || 'Verifique suas credenciais')
+        let message = error.message || 'Verifique suas credenciais'
+
+        // Enhanced error handling for connection issues
+        if (
+          message.includes('Failed to fetch') ||
+          message.includes('NetworkError')
+        ) {
+          message =
+            'Erro de conexão com o servidor. Verifique a URL do projeto e sua conexão.'
+        } else if (message.includes('Database error')) {
+          message = 'Erro de banco de dados. Contate o suporte.'
+        }
+
+        setLoginError(message)
         toast({
           title: 'Erro ao entrar',
-          description: error.message || 'Verifique suas credenciais',
+          description: message,
           variant: 'destructive',
         })
       } else {
@@ -70,7 +83,17 @@ export default function Login() {
       }
     } catch (err: any) {
       console.error('[Login] Unexpected Error:', err)
-      setLoginError(err.message || 'Ocorreu um erro inesperado')
+      let message = err.message || 'Ocorreu um erro inesperado'
+
+      if (
+        message.includes('Failed to fetch') ||
+        message.includes('NetworkError')
+      ) {
+        message =
+          'Erro de conexão com o servidor. Verifique a URL do projeto e sua conexão.'
+      }
+
+      setLoginError(message)
     } finally {
       setLoading(false)
     }
