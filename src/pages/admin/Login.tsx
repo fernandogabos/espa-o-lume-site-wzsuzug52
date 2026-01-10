@@ -39,7 +39,6 @@ export default function Login() {
       }
     } else if (user && !profile && !authLoading) {
       // Edge case: User exists but profile failed to load
-      // This often happens if RLS blocks access or profile creation failed
       console.warn(
         'User authenticated but profile not found. Check RLS policies.',
       )
@@ -60,21 +59,28 @@ export default function Login() {
       if (error) {
         console.error('[Login] Error:', error)
         let message = error.message || 'Verifique suas credenciais'
+        let title = 'Erro ao entrar'
 
         // Enhanced error handling for connection issues
         if (
           message.includes('Failed to fetch') ||
-          message.includes('NetworkError')
+          message.includes('NetworkError') ||
+          message.includes('network')
         ) {
           message =
-            'Erro de conexão com o servidor. Verifique a URL do projeto e sua conexão.'
+            'Não foi possível conectar ao servidor. Verifique sua conexão com a internet ou se a configuração do projeto (URL/Chaves) está correta.'
+          title = 'Erro de Conexão'
         } else if (message.includes('Database error')) {
-          message = 'Erro de banco de dados. Contate o suporte.'
+          message = 'Erro interno do banco de dados. Contate o suporte.'
+          title = 'Erro de Sistema'
+        } else if (message.includes('Invalid login credentials')) {
+          message = 'Email ou senha incorretos. Por favor, tente novamente.'
+          title = 'Credenciais Inválidas'
         }
 
         setLoginError(message)
         toast({
-          title: 'Erro ao entrar',
+          title: title,
           description: message,
           variant: 'destructive',
         })
@@ -90,19 +96,21 @@ export default function Login() {
         message.includes('NetworkError')
       ) {
         message =
-          'Erro de conexão com o servidor. Verifique a URL do projeto e sua conexão.'
+          'Erro grave de conexão. O servidor pode estar indisponível ou as credenciais de ambiente incorretas.'
       }
 
       setLoginError(message)
+      toast({
+        title: 'Erro Inesperado',
+        description: message,
+        variant: 'destructive',
+      })
     } finally {
       setLoading(false)
     }
   }
 
   // Render Loading Screen
-  // Shows if:
-  // 1. Auth is initial loading
-  // 2. User is logged in but profile is still loading (waiting for redirect)
   if (authLoading || (user && !profile)) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
@@ -114,9 +122,11 @@ export default function Login() {
         </h2>
         <div className="flex items-center text-lume-deep-blue/80 gap-2">
           <Loader2 className="w-5 h-5 animate-spin" />
-          <span>Carregando sistema...</span>
+          <span>Conectando ao sistema...</span>
         </div>
-        <p className="text-sm text-gray-400 mt-2">Aguarde um momento.</p>
+        <p className="text-sm text-gray-400 mt-2">
+          Isso pode levar alguns segundos.
+        </p>
       </div>
     )
   }
@@ -124,9 +134,9 @@ export default function Login() {
   // Render Standard Login Form
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md shadow-lg border-lume-gray/20">
         <CardHeader className="text-center space-y-4">
-          <div className="mx-auto bg-lume-mint/20 p-4 rounded-full w-fit">
+          <div className="mx-auto bg-lume-mint/10 p-4 rounded-full w-fit">
             <Flame className="w-8 h-8 text-lume-deep-blue" />
           </div>
           <div>
@@ -141,9 +151,9 @@ export default function Login() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {loginError && (
-              <Alert variant="destructive">
+              <Alert variant="destructive" className="animate-fade-in-down">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Erro de Acesso</AlertTitle>
+                <AlertTitle>Problema de Acesso</AlertTitle>
                 <AlertDescription>{loginError}</AlertDescription>
               </Alert>
             )}
@@ -153,11 +163,12 @@ export default function Login() {
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   type="email"
-                  placeholder="Email"
+                  placeholder="Email corporativo"
                   className="pl-9"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  autoComplete="email"
                 />
               </div>
             </div>
@@ -171,23 +182,30 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  autoComplete="current-password"
                 />
               </div>
             </div>
             <Button
               type="submit"
-              className="w-full bg-lume-deep-blue hover:bg-lume-deep-blue/90"
+              className="w-full bg-lume-deep-blue hover:bg-lume-deep-blue/90 text-white font-medium transition-all duration-200"
               disabled={loading}
             >
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Entrando...
+                  Autenticando...
                 </>
               ) : (
-                'Entrar'
+                'Entrar no Sistema'
               )}
             </Button>
+
+            <div className="text-center">
+              <p className="text-xs text-muted-foreground mt-4">
+                Em caso de problemas, contate o administrador do sistema.
+              </p>
+            </div>
           </form>
         </CardContent>
       </Card>
